@@ -1,11 +1,14 @@
-use crate::handlers::general::*;
-use actix_web::{web, App, HttpServer};
+use actix_web::{App, HttpServer};
 use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
 use std::{env, io};
 
 #[path = "../travel-information/handlers/mod.rs"]
 mod handlers;
+#[path = "../travel-information/routing/routes.rs"]
+mod routes;
+
+use routes::*;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -22,7 +25,7 @@ async fn main() -> io::Result<()> {
     let _db_pool = MySqlPool::connect(&database_url).await.unwrap();
 
     // create the application and configure the routes
-    let app = move || App::new().route("/", web::get().to(welcome_page_handler));
+    let app = move || App::new().configure(general_routes);
 
     let app_url = env::var("APP_URL").expect("APP_URL is not set in the .env file.");
 
