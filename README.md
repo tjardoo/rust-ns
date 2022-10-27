@@ -10,6 +10,11 @@ The aim of this project is to develop a web app that can show the train informat
 
 Does the API calls to the NS API and prepares to data to display it in the ``web-app``.
 
+```bash
+cd ns-web-service
+cargo run --bin travel-information
+```
+
 ### /web-app
 
 Consists of a server with multiple routes to display the information prepared by the ``ns-web-service``.
