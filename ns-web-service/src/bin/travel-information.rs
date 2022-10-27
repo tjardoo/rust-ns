@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
 use std::{env, io};
@@ -33,11 +33,14 @@ async fn main() -> io::Result<()> {
     // create a new MySql connection and immediately establishes one connection
     let db_pool = MySqlPool::connect(&database_url).await.unwrap();
 
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
     let shared_data = web::Data::new(AppState { pool: db_pool });
 
     // create the application and configure the routes
     let app = move || {
         App::new()
+            .wrap(Logger::new("%a %r %s %b %{Referer}i %{User-Agent}i %T"))
             .app_data(shared_data.clone())
             .configure(general_routes)
             .configure(departures)
