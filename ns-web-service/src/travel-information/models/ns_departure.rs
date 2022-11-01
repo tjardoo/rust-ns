@@ -10,11 +10,11 @@ pub struct Departure {
     actualDateTime: String,
     actualTimeZoneOffset: i32,
     plannedTrack: String,
-    product: Vec<Product>,
+    product: Product,
     trainCategory: String,
     cancelled: bool,
     routeStations: Vec<RouteStation>,
-    messages: Vec<String>,
+    messages: Option<Vec<Message>>,
     departureStatus: String,
 }
 
@@ -35,4 +35,11 @@ pub struct Product {
 pub struct RouteStation {
     uicCode: String,
     mediumName: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct Message {
+    message: String,
+    style: String,
 }

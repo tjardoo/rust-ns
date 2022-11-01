@@ -1,5 +1,6 @@
 use std::error::Error;
 
+use crate::models::ns_departure::Departure;
 use crate::state::AppState;
 use crate::{database::departures::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
@@ -38,17 +39,15 @@ pub async fn download_departures(
         .body()
         .await?;
 
-    // println!("{:?}", response);
-
     let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
 
     let inner_value = &value["payload"]["departures"];
 
     println!("{:#?}", inner_value);
 
-    // let departures: Vec<Departure> = serde_json::from_value(inner_value.clone()).unwrap();
+    let departures: Vec<Departure> = serde_json::from_value(inner_value.clone()).unwrap();
 
-    // println!("{:#?}", departures);
+    println!("{:#?}", departures);
 
-    Ok(HttpResponse::Ok().json(inner_value))
+    Ok(HttpResponse::Ok().json(departures))
 }
