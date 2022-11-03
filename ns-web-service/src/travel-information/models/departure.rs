@@ -1,26 +1,78 @@
-use std::str::FromStr;
-
 use serde::{Deserialize, Serialize};
 use sqlx::{mysql::MySqlRow, FromRow, Row};
 
-#[derive(Debug, Deserialize, Serialize, sqlx::Type)]
-#[sqlx(type_name = "train_category")]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum TrainCategory {
-    #[sqlx(rename = "spr")]
     SPR,
-    #[sqlx(rename = "ic")]
     IC,
-    #[sqlx(rename = "unknown")]
     UNKNOWN,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Departure {
-    pub id: i32,
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct FullDeparture {
+    pub id: u32,
     pub direction: String,
-    pub train_name: String,
-    pub planned_track: String,
-    pub train_category: TrainCategory,
+    pub name: String,
+    pub plannedDateTime: String,
+    pub plannedTimeZoneOffset: i32,
+    pub actualDateTime: String,
+    pub actualTimeZoneOffset: i32,
+    pub plannedTrack: String,
+    pub product: Product,
+    pub trainCategory: TrainCategory,
+    pub cancelled: bool,
+    pub routeStations: Vec<RouteStation>,
+    pub messages: Option<Vec<Message>>,
+    pub departureStatus: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct Departure {
+    pub id: u32,
+    pub direction: String,
+    pub name: String,
+    pub plannedDateTime: String,
+    pub plannedTimeZoneOffset: i32,
+    pub actualDateTime: String,
+    pub actualTimeZoneOffset: i32,
+    pub plannedTrack: String,
+    pub productId: i32,
+    pub trainCategory: String,
+    pub cancelled: bool,
+    pub departureStatus: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct Product {
+    pub id: u32,
+    pub number: String,
+    pub categoryCode: String,
+    pub shortCategoryName: String,
+    pub longCategoryName: String,
+    pub operatorCode: String,
+    pub operatorName: String,
+    pub r#type: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct RouteStation {
+    pub id: u32,
+    pub departure_id: u32,
+    pub uicCode: String,
+    pub mediumName: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct Message {
+    pub id: u32,
+    pub departure_id: u32,
+    pub message: String,
+    pub style: String,
 }
 
 impl std::str::FromStr for TrainCategory {
@@ -28,9 +80,9 @@ impl std::str::FromStr for TrainCategory {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "spr" => Ok(TrainCategory::SPR),
-            "ic" => Ok(TrainCategory::IC),
-            "unknown" => Ok(TrainCategory::UNKNOWN),
+            "SPR" => Ok(TrainCategory::SPR),
+            "IC" => Ok(TrainCategory::IC),
+            "UNKOWN" => Ok(TrainCategory::UNKNOWN),
             _ => Err(format!("'{}' is not a valid value for TrainCategory", s)),
         }
     }
@@ -38,19 +90,89 @@ impl std::str::FromStr for TrainCategory {
 
 impl<'a> FromRow<'a, MySqlRow> for Departure {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
-        let tc: String = row.get("train_category");
+        // let tc: String = row.get("trainCategory");
 
-        let train_category = match TrainCategory::from_str(&tc) {
-            Ok(t) => t,
-            Err(_) => TrainCategory::UNKNOWN,
-        };
+        // let train_category = match TrainCategory::from_str(&tc) {
+        //     Ok(t) => t,
+        //     Err(_) => TrainCategory::UNKNOWN,
+        // };
+
+        // let routeStations = vec![RouteStation {
+        //     id: 1,
+        //     departure_id: 1,
+        //     uicCode: String::from("NS 3944"),
+        //     mediumName: String::from("Sloterdijk"),
+        // }];
+
+        // let messages = Some(vec![Message {
+        //     id: 1,
+        //     departure_id: 1,
+        //     message: String::from("Stopt niet in Zaandam"),
+        //     style: String::from("INFO"),
+        // }]);
 
         Ok(Departure {
-            id: row.get("index"),
+            id: row.get("id"),
             direction: row.get("direction"),
-            train_name: row.get("train_name"),
-            planned_track: row.get("planned_track"),
-            train_category: train_category,
+            name: row.get("train_name"),
+            plannedDateTime: row.get("planned_date_time"),
+            plannedTimeZoneOffset: row.get("planned_time_zone_offset"),
+            actualDateTime: row.get("acutal_date_time"),
+            actualTimeZoneOffset: row.get("actual_time_zone_offset"),
+            plannedTrack: row.get("planned_track"),
+            productId: row.get("product_id"),
+            // product: Product {
+            //     id: 1,
+            //     number: String::from("3939"),
+            //     categoryCode: String::from("IC"),
+            //     shortCategoryName: String::from("NS Intercity"),
+            //     longCategoryName: String::from("Intercity"),
+            //     operatorCode: String::from("NS"),
+            //     operatorName: String::from("NS"),
+            //     r#type: String::from("TRAIN"),
+            // },
+            trainCategory: row.get("train_category"),
+            cancelled: row.get("is_cancelled"),
+            departureStatus: row.get("departure_status"),
+            // routeStations: routeStations,
+            // messages: messages,
+        })
+    }
+}
+
+impl<'a> FromRow<'a, MySqlRow> for Product {
+    fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
+        Ok(Product {
+            id: row.get("id"),
+            number: row.get("product_number"),
+            categoryCode: row.get("category_code"),
+            shortCategoryName: row.get("short_category_code"),
+            longCategoryName: row.get("long_category_code"),
+            operatorCode: row.get("operator_code"),
+            operatorName: row.get("operator_name"),
+            r#type: row.get("product_type"),
+        })
+    }
+}
+
+impl<'a> FromRow<'a, MySqlRow> for RouteStation {
+    fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
+        Ok(RouteStation {
+            id: row.get("id"),
+            departure_id: row.get("departure_id"),
+            uicCode: row.get("uic_code"),
+            mediumName: row.get("medium_name"),
+        })
+    }
+}
+
+impl<'a> FromRow<'a, MySqlRow> for Message {
+    fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
+        Ok(Message {
+            id: row.get("id"),
+            departure_id: row.get("departure_id"),
+            message: row.get("content"),
+            style: row.get("style"),
         })
     }
 }

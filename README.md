@@ -10,10 +10,16 @@ The aim of this project is to develop a web app that can show the train informat
 
 Does the API calls to the NS API and prepares to data to display it in the ``web-app``.
 
+Run the migration script ``scripts\departures.sql``.
+
 ```bash
 cd ns-web-service
 cargo run --bin travel-information
 ```
+
+To view all departures visit ``/departures``.
+
+To view the details of a departure visit ``/departures/{departure_id}``.
 
 ### /web-app
 

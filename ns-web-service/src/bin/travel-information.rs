@@ -1,4 +1,4 @@
-use actix_web::{middleware::Logger, web, App, HttpServer};
+use actix_web::{middleware::Logger, middleware::NormalizePath, web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
 use std::{env, io};
@@ -40,6 +40,7 @@ async fn main() -> io::Result<()> {
     // create the application and configure the routes
     let app = move || {
         App::new()
+            .wrap(NormalizePath::trim())
             .wrap(Logger::new("%a %r %s %b %{Referer}i %{User-Agent}i %T"))
             .app_data(shared_data.clone())
             .configure(general_routes)
