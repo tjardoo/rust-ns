@@ -90,27 +90,6 @@ impl std::str::FromStr for TrainCategory {
 
 impl<'a> FromRow<'a, MySqlRow> for Departure {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
-        // let tc: String = row.get("trainCategory");
-
-        // let train_category = match TrainCategory::from_str(&tc) {
-        //     Ok(t) => t,
-        //     Err(_) => TrainCategory::UNKNOWN,
-        // };
-
-        // let routeStations = vec![RouteStation {
-        //     id: 1,
-        //     departure_id: 1,
-        //     uicCode: String::from("NS 3944"),
-        //     mediumName: String::from("Sloterdijk"),
-        // }];
-
-        // let messages = Some(vec![Message {
-        //     id: 1,
-        //     departure_id: 1,
-        //     message: String::from("Stopt niet in Zaandam"),
-        //     style: String::from("INFO"),
-        // }]);
-
         Ok(Departure {
             id: row.get("id"),
             direction: row.get("direction"),
@@ -121,21 +100,9 @@ impl<'a> FromRow<'a, MySqlRow> for Departure {
             actualTimeZoneOffset: row.get("actual_time_zone_offset"),
             plannedTrack: row.get("planned_track"),
             productId: row.get("product_id"),
-            // product: Product {
-            //     id: 1,
-            //     number: String::from("3939"),
-            //     categoryCode: String::from("IC"),
-            //     shortCategoryName: String::from("NS Intercity"),
-            //     longCategoryName: String::from("Intercity"),
-            //     operatorCode: String::from("NS"),
-            //     operatorName: String::from("NS"),
-            //     r#type: String::from("TRAIN"),
-            // },
             trainCategory: row.get("train_category"),
             cancelled: row.get("is_cancelled"),
             departureStatus: row.get("departure_status"),
-            // routeStations: routeStations,
-            // messages: messages,
         })
     }
 }

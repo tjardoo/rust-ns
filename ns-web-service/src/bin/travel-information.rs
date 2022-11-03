@@ -21,23 +21,16 @@ use state::AppState;
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
-    // get the variables from the .env file
     dotenv().ok();
 
-    // generate the database URL
     let database_url = generate_database_url();
 
-    // (optional) print the generated database URL
-    // println!("{}", database_url);
-
-    // create a new MySql connection and immediately establishes one connection
     let db_pool = MySqlPool::connect(&database_url).await.unwrap();
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     let shared_data = web::Data::new(AppState { pool: db_pool });
 
-    // create the application and configure the routes
     let app = move || {
         App::new()
             .wrap(NormalizePath::trim())
@@ -51,7 +44,6 @@ async fn main() -> io::Result<()> {
 
     println!("Server is running on: {}", app_url);
 
-    // start the HTTP server
     HttpServer::new(app).bind(&app_url)?.run().await
 }
 

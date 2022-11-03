@@ -1,7 +1,8 @@
 use std::error::Error;
 use std::str::FromStr;
 
-use crate::models::departure::{Departure, FullDeparture, TrainCategory};
+use crate::models::api_departure::ApiDeparture;
+use crate::models::departure::{FullDeparture, TrainCategory};
 use crate::state::AppState;
 use crate::{database::departures::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
@@ -88,7 +89,7 @@ pub async fn download_departures(
 
     println!("{:#?}", inner_value);
 
-    let departures: Vec<Departure> = serde_json::from_value(inner_value.clone()).unwrap();
+    let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
 
     println!("{:#?}", departures);
 
