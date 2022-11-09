@@ -2005,6 +2005,17 @@ checksum = "1c38c045535d93ec4f0b4defec448e4291638ee608530863b1e2ba115d4fff7f"
 [[package]]
 name = "web-app"
 version = "0.1.0"
+dependencies = [
+ "actix-rt",
+ "actix-web",
+ "awc",
+ "chrono",
+ "dotenv",
+ "env_logger",
+ "log",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "web-sys"
