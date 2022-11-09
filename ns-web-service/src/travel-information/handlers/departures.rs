@@ -58,7 +58,7 @@ pub async fn get_departure(
     Ok(HttpResponse::Ok().json(full_departure))
 }
 
-pub async fn download_departures(
+pub async fn fetch_departures(
     _app_state: web::Data<AppState>,
 ) -> Result<HttpResponse, Box<dyn Error>> {
     let ssl = {
@@ -94,4 +94,40 @@ pub async fn download_departures(
     println!("{:#?}", departures);
 
     Ok(HttpResponse::Ok().json(departures))
+}
+
+pub async fn download_departures(
+    app_state: web::Data<AppState>,
+) -> Result<HttpResponse, Box<dyn Error>> {
+    let ssl = {
+        let mut ssl = SslConnector::builder(openssl::ssl::SslMethod::tls()).unwrap();
+        ssl.set_verify(SslVerifyMode::NONE);
+        ssl.build()
+    };
+
+    let connector = awc::Connector::new().openssl(ssl);
+
+    let ns_api_key = env::var("NS_API_KEY").expect("NS_API_KEY is not set in the .env file.");
+
+    let response = awc::ClientBuilder::new()
+        .connector(connector)
+        .finish()
+        .get("https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station=HN")
+        .insert_header(("Ocp-Apim-Subscription-Key", ns_api_key))
+        .insert_header(("User-Agent", "Actix-web"))
+        .send()
+        .await
+        .unwrap()
+        .body()
+        .await?;
+
+    let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
+
+    let inner_value = &value["payload"]["departures"];
+
+    let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
+
+    let result = db_insert_downloaded_api_data(&app_state.pool, departures).await;
+
+    Ok(HttpResponse::Ok().body(result.unwrap()))
 }

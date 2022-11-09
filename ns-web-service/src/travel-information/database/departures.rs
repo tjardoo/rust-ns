@@ -1,4 +1,5 @@
 use crate::errors::RustNSError;
+use crate::models::api_departure::ApiDeparture;
 use crate::models::departure::{Departure, Message, Product, RouteStation};
 use sqlx::mysql::MySqlPool;
 
@@ -145,4 +146,101 @@ pub async fn db_get_messages_by_departure_id(
     .await?;
 
     Ok(message_rows)
+}
+
+pub async fn db_insert_downloaded_api_data(
+    pool: &MySqlPool,
+    departures: Vec<ApiDeparture>,
+) -> Result<String, RustNSError> {
+    for departure in departures {
+        let product_id = sqlx::query_as!(
+            Departure,
+            "INSERT INTO products (
+            product_number,
+            category_code,
+            short_category_code,
+            long_category_code,
+            operator_code,
+            operator_name,
+            product_type
+        ) values (?, ?, ?, ?, ?, ?, ?)",
+            departure.product.number,
+            departure.product.categoryCode,
+            departure.product.shortCategoryName,
+            departure.product.longCategoryName,
+            departure.product.operatorCode,
+            departure.product.operatorName,
+            departure.product.r#type,
+        )
+        .execute(pool)
+        .await?
+        .last_insert_id();
+
+        let departure_id = sqlx::query_as!(
+            Departure,
+            "INSERT INTO departures (
+            direction,
+            train_name,
+            planned_date_time,
+            planned_time_zone_offset,
+            actual_date_time,
+            actual_time_zone_offset,
+            planned_track,
+            product_id,
+            train_category,
+            is_cancelled,
+            departure_status
+        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            departure.direction,
+            departure.name,
+            departure.plannedDateTime,
+            departure.plannedTimeZoneOffset,
+            departure.actualDateTime,
+            departure.actualTimeZoneOffset,
+            departure.plannedTrack,
+            product_id,
+            departure.trainCategory,
+            departure.cancelled,
+            departure.departureStatus,
+        )
+        .execute(pool)
+        .await?
+        .last_insert_id();
+
+        for route_station in departure.routeStations {
+            sqlx::query_as!(
+                RouteStation,
+                "INSERT INTO route_stations (
+                departure_id,
+                uic_code,
+                medium_name
+            ) values (?, ?, ?)",
+                departure_id,
+                route_station.uicCode,
+                route_station.mediumName,
+            )
+            .execute(pool)
+            .await?
+            .last_insert_id();
+        }
+
+        for message in departure.messages.unwrap() {
+            sqlx::query_as!(
+                Departure,
+                "INSERT INTO messages (
+                departure_id,
+                content,
+                style
+            ) values (?, ?, ?)",
+                departure_id,
+                message.message,
+                message.style,
+            )
+            .execute(pool)
+            .await?
+            .last_insert_id();
+        }
+    }
+
+    Ok("Database updated.".into())
 }
