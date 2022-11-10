@@ -1,9 +1,10 @@
 use actix_web::{web::Path, HttpResponse};
 use awc::Client;
 use serde_json::Value;
-use std::error::Error;
 
-pub async fn departure_overview() -> Result<HttpResponse, Box<dyn Error>> {
+use crate::app::errors::WebAppError;
+
+pub async fn departure_overview() -> Result<HttpResponse, WebAppError> {
     let awc_client = Client::default();
 
     let response = awc_client
@@ -12,16 +13,17 @@ pub async fn departure_overview() -> Result<HttpResponse, Box<dyn Error>> {
         .await
         .unwrap()
         .body()
-        .await?;
+        .await
+        .unwrap();
 
-    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
+    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response).unwrap()).unwrap();
 
     println!("{:#?}", departures);
 
     Ok(HttpResponse::Ok().json(departures))
 }
 
-pub async fn departure_show(path: Path<i32>) -> Result<HttpResponse, Box<dyn Error>> {
+pub async fn departure_show(path: Path<i32>) -> Result<HttpResponse, WebAppError> {
     let departure_id: i32 = path.into_inner();
 
     let awc_client = Client::default();
@@ -37,7 +39,7 @@ pub async fn departure_show(path: Path<i32>) -> Result<HttpResponse, Box<dyn Err
         .await
         .unwrap();
 
-    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
+    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response).unwrap()).unwrap();
 
     println!("{:#?}", departures);
 

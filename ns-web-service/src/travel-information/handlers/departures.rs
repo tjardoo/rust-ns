@@ -22,21 +22,14 @@ pub async fn get_departure(
 ) -> Result<HttpResponse, RustNSError> {
     let departure_id: u32 = params.into_inner();
 
-    let departure = db_get_departure_by_id(&app_state.pool, departure_id)
-        .await
-        .unwrap();
+    let departure = db_get_departure_by_id(&app_state.pool, departure_id).await?;
 
-    let product = db_get_product_by_id(&app_state.pool, departure_id)
-        .await
-        .unwrap();
+    let product = db_get_product_by_id(&app_state.pool, departure_id).await?;
 
-    let route_stations = db_get_route_stations_by_departure_id(&app_state.pool, departure_id)
-        .await
-        .unwrap();
+    let route_stations =
+        db_get_route_stations_by_departure_id(&app_state.pool, departure_id).await?;
 
-    let messages = db_get_messages_by_departure_id(&app_state.pool, departure_id)
-        .await
-        .unwrap();
+    let messages = db_get_messages_by_departure_id(&app_state.pool, departure_id).await?;
 
     let full_departure = FullDeparture {
         id: departure.id,

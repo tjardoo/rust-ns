@@ -20,12 +20,12 @@ impl RustNSError {
             RustNSError::DatabaseError(msg) => {
                 println!("Database error: {:?}", msg);
 
-                "Database error".into()
+                msg.into()
             }
             RustNSError::InternalServerError(msg) => {
                 println!("Internal server error: {:?}", msg);
 
-                "Internal server error".into()
+                msg.into()
             }
         }
     }

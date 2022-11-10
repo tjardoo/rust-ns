@@ -24,3 +24,12 @@ To view the details of a departure visit ``/departures/{departure_id}``.
 ### /web-app
 
 Consists of a server with multiple routes to display the information prepared by the ``ns-web-service``.
+
+```bash
+cd web-app
+cargo run --bin app
+```
+
+To view all departures visit ``/departures/overview``.
+
+To view the details of a departure visit ``/departures/{departure_id}``.
