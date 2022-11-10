@@ -20,6 +20,7 @@ async fn main() -> io::Result<()> {
             .wrap(Logger::new("%a %r %s %b %{Referer}i %{User-Agent}i %T"))
             .app_data(shared_data.clone())
             .configure(routes::general_routes)
+            .configure(routes::departure_routes)
     };
 
     let app_url = env::var("APP_URL").expect("APP_URL is not set in the .env file.");
