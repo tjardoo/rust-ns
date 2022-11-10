@@ -1,14 +1,22 @@
-use actix_web::{web::Path, HttpResponse};
+use actix_web::web;
+use actix_web::HttpResponse;
 use awc::Client;
 use serde_json::Value;
+use std::env;
 
 use crate::app::errors::WebAppError;
 
-pub async fn departure_overview() -> Result<HttpResponse, WebAppError> {
+pub async fn get_station_departure_overview() -> Result<HttpResponse, WebAppError> {
     let awc_client = Client::default();
 
+    let target_url = env::var("TARGET_URL").expect("TARGET_URL is not set in the .env file.");
+    let station_code = env::var("STATION_CODE").expect("STATION_CODE is not set in the .env file.");
+    let url = format!("{}/station/{}/departures", target_url, station_code);
+
+    println!("Visiting {:#?}", url);
+
     let response = awc_client
-        .get("http://localhost:7878/departures/")
+        .get(url)
         .send()
         .await
         .unwrap()
@@ -23,12 +31,21 @@ pub async fn departure_overview() -> Result<HttpResponse, WebAppError> {
     Ok(HttpResponse::Ok().json(departures))
 }
 
-pub async fn departure_show(path: Path<i32>) -> Result<HttpResponse, WebAppError> {
-    let departure_id: i32 = path.into_inner();
+pub async fn get_station_departure_by_id(
+    params: web::Path<i32>,
+) -> Result<HttpResponse, WebAppError> {
+    let departure_id = params.into_inner();
 
     let awc_client = Client::default();
 
-    let url = format!("http://localhost:7878/departures/{}", departure_id);
+    let target_url = env::var("TARGET_URL").expect("TARGET_URL is not set in the .env file.");
+    let station_code = env::var("STATION_CODE").expect("STATION_CODE is not set in the .env file.");
+    let url = format!(
+        "{}/station/{}/departures/{}",
+        target_url, station_code, departure_id
+    );
+
+    println!("Visiting {:#?}", url);
 
     let response = awc_client
         .get(url)

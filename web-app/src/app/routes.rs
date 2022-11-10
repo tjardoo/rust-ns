@@ -7,6 +7,9 @@ pub fn general_routes(cfg: &mut web::ServiceConfig) {
 }
 
 pub fn departure_routes(cfg: &mut web::ServiceConfig) {
-    cfg.route("/departures/overview", web::get().to(departure_overview))
-        .route("/departures/{departure_id}", web::get().to(departure_show));
+    cfg.route("/departures", web::get().to(get_station_departure_overview))
+        .route(
+            "/departures/{departure_id}",
+            web::get().to(get_station_departure_by_id),
+        );
 }
