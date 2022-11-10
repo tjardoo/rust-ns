@@ -17,9 +17,11 @@ cd ns-web-service
 cargo run --bin travel-information
 ```
 
-To view all departures visit ``/departures``.
+To view all departures for a certain station: ``/station/{station_code}/departures``.
 
-To view the details of a departure visit ``/departures/{departure_id}``.
+To view the details of a departure: ``/station/{station_code}/departures/{departure_id}``.
+
+You can use the station_code ``HN`` or ``ASD`` to test.
 
 ### /web-app
 
@@ -30,6 +32,6 @@ cd web-app
 cargo run --bin app
 ```
 
-To view all departures visit ``/departures/overview``.
+To view all departures: ``/departures``.
 
-To view the details of a departure visit ``/departures/{departure_id}``.
+You can change the station_code in the ``.env`` file.

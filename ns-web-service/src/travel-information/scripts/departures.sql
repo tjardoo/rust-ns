@@ -1,6 +1,7 @@
 CREATE TABLE departures
 (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    station_code VARCHAR(50) NOT NULL,
     direction VARCHAR(50) NOT NULL,
     train_name VARCHAR(50) NOT NULL,
     planned_date_time VARCHAR(50) NOT NULL,
@@ -68,6 +69,7 @@ INSERT INTO products(id, product_number, category_code, short_category_code, lon
 INSERT INTO
     departures(
         id,
+        station_code,
         direction,
         train_name,
         planned_date_time,
@@ -82,6 +84,7 @@ INSERT INTO
     )
 VALUES(
         1,
+        "HN",
         'Amsterdam Centraal',
         'NS 3939',
         '2022-11-03T10:40:00+0100',
@@ -113,6 +116,7 @@ INSERT INTO products(id, product_number, category_code, short_category_code, lon
 INSERT INTO
     departures(
         id,
+        station_code,
         direction,
         train_name,
         planned_date_time,
@@ -127,6 +131,7 @@ INSERT INTO
     )
 VALUES(
         2,
+        "HN",
         'Den Haag Centraal',
         'NS 3343',
         '2022-11-03T11:19:00+0100',

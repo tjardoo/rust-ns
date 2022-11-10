@@ -5,6 +5,7 @@ use sqlx::{mysql::MySqlRow, FromRow, Row};
 pub enum TrainCategory {
     SPR,
     IC,
+    ICD,
     UNKNOWN,
 }
 
@@ -12,6 +13,7 @@ pub enum TrainCategory {
 #[allow(non_snake_case)]
 pub struct FullDeparture {
     pub id: u32,
+    pub stationCode: String,
     pub direction: String,
     pub name: String,
     pub plannedDateTime: String,
@@ -31,6 +33,7 @@ pub struct FullDeparture {
 #[allow(non_snake_case)]
 pub struct Departure {
     pub id: u32,
+    pub stationCode: String,
     pub direction: String,
     pub name: String,
     pub plannedDateTime: String,
@@ -82,6 +85,7 @@ impl std::str::FromStr for TrainCategory {
         match s {
             "SPR" => Ok(TrainCategory::SPR),
             "IC" => Ok(TrainCategory::IC),
+            "ICD" => Ok(TrainCategory::ICD),
             "UNKOWN" => Ok(TrainCategory::UNKNOWN),
             _ => Err(format!("'{}' is not a valid value for TrainCategory", s)),
         }
@@ -92,6 +96,7 @@ impl<'a> FromRow<'a, MySqlRow> for Departure {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
         Ok(Departure {
             id: row.get("id"),
+            stationCode: row.get("station_code"),
             direction: row.get("direction"),
             name: row.get("train_name"),
             plannedDateTime: row.get("planned_date_time"),

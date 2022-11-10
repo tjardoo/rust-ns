@@ -10,17 +10,22 @@ use openssl::ssl::{SslConnector, SslVerifyMode};
 use serde_json::Value;
 use std::env;
 
-pub async fn get_departures(app_state: web::Data<AppState>) -> Result<HttpResponse, RustNSError> {
-    db_get_departures(&app_state.pool)
+pub async fn get_departures_by_station_code(
+    app_state: web::Data<AppState>,
+    params: web::Path<String>,
+) -> Result<HttpResponse, RustNSError> {
+    let station_code = params.into_inner();
+
+    db_get_departures_by_station_code(&app_state.pool, station_code)
         .await
         .map(|departures| HttpResponse::Ok().json(departures))
 }
 
-pub async fn get_departure(
+pub async fn get_departure_by_station_code_and_id(
     app_state: web::Data<AppState>,
-    params: web::Path<u32>,
+    params: web::Path<(String, u32)>,
 ) -> Result<HttpResponse, RustNSError> {
-    let departure_id: u32 = params.into_inner();
+    let (_station_code, departure_id) = params.into_inner();
 
     let departure = db_get_departure_by_id(&app_state.pool, departure_id).await?;
 
@@ -33,6 +38,7 @@ pub async fn get_departure(
 
     let full_departure = FullDeparture {
         id: departure.id,
+        stationCode: departure.stationCode,
         direction: departure.direction,
         name: departure.name,
         plannedDateTime: departure.plannedDateTime,
@@ -51,9 +57,12 @@ pub async fn get_departure(
     Ok(HttpResponse::Ok().json(full_departure))
 }
 
-pub async fn fetch_departures(
+pub async fn fetch_departures_by_station_code(
     _app_state: web::Data<AppState>,
+    params: web::Path<String>,
 ) -> Result<HttpResponse, Box<dyn Error>> {
+    let station_code = params.into_inner();
+
     let ssl = {
         let mut ssl = SslConnector::builder(openssl::ssl::SslMethod::tls()).unwrap();
         ssl.set_verify(SslVerifyMode::NONE);
@@ -64,10 +73,15 @@ pub async fn fetch_departures(
 
     let ns_api_key = env::var("NS_API_KEY").expect("NS_API_KEY is not set in the .env file.");
 
+    let url = format!(
+        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}",
+        station_code
+    );
+
     let response = awc::ClientBuilder::new()
         .connector(connector)
         .finish()
-        .get("https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station=HN")
+        .get(url)
         .insert_header(("Ocp-Apim-Subscription-Key", ns_api_key))
         .insert_header(("User-Agent", "Actix-web"))
         .send()
@@ -89,9 +103,12 @@ pub async fn fetch_departures(
     Ok(HttpResponse::Ok().json(departures))
 }
 
-pub async fn download_departures(
+pub async fn download_departures_by_station_code(
     app_state: web::Data<AppState>,
+    params: web::Path<String>,
 ) -> Result<HttpResponse, Box<dyn Error>> {
+    let station_code = params.into_inner();
+
     let ssl = {
         let mut ssl = SslConnector::builder(openssl::ssl::SslMethod::tls()).unwrap();
         ssl.set_verify(SslVerifyMode::NONE);
@@ -102,10 +119,15 @@ pub async fn download_departures(
 
     let ns_api_key = env::var("NS_API_KEY").expect("NS_API_KEY is not set in the .env file.");
 
+    let url = format!(
+        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}",
+        station_code
+    );
+
     let response = awc::ClientBuilder::new()
         .connector(connector)
         .finish()
-        .get("https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station=HN")
+        .get(url)
         .insert_header(("Ocp-Apim-Subscription-Key", ns_api_key))
         .insert_header(("User-Agent", "Actix-web"))
         .send()
@@ -120,7 +142,7 @@ pub async fn download_departures(
 
     let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
 
-    let result = db_insert_downloaded_api_data(&app_state.pool, departures).await;
+    let result = db_insert_downloaded_api_data(&app_state.pool, station_code, departures).await;
 
     Ok(HttpResponse::Ok().body(result.unwrap()))
 }

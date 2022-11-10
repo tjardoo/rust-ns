@@ -3,11 +3,15 @@ use crate::models::api_departure::ApiDeparture;
 use crate::models::departure::{Departure, Message, Product, RouteStation};
 use sqlx::mysql::MySqlPool;
 
-pub async fn db_get_departures(pool: &MySqlPool) -> Result<Vec<Departure>, RustNSError> {
+pub async fn db_get_departures_by_station_code(
+    pool: &MySqlPool,
+    station_code: String,
+) -> Result<Vec<Departure>, RustNSError> {
     let departures = sqlx::query_as!(
         Departure,
         r#"SELECT 
         id,
+        station_code as stationCode,
         direction,
         train_name as name,
         planned_date_time as plannedDateTime,
@@ -20,7 +24,9 @@ pub async fn db_get_departures(pool: &MySqlPool) -> Result<Vec<Departure>, RustN
         is_cancelled as "cancelled: bool",
         departure_status as departureStatus
         FROM departures
-        "#
+        WHERE station_code = ?
+        "#,
+        station_code
     )
     .fetch_all(pool)
     .await
@@ -29,9 +35,10 @@ pub async fn db_get_departures(pool: &MySqlPool) -> Result<Vec<Departure>, RustN
     if departures.len() > 0 {
         Ok(departures)
     } else {
-        Err(RustNSError::DatabaseError(
-            "No departures found in the database.".into(),
-        ))
+        Err(RustNSError::DatabaseError(format!(
+            "No departures found in the database for station_code = {}",
+            station_code
+        )))
     }
 }
 
@@ -40,6 +47,7 @@ pub async fn db_get_departure_by_id(pool: &MySqlPool, id: u32) -> Result<Departu
         Departure,
         r#"SELECT 
         id,
+        station_code as stationCode,
         direction,
         train_name as name,
         planned_date_time as plannedDateTime,
@@ -119,9 +127,7 @@ pub async fn db_get_route_stations_by_departure_id(
     if route_stations.len() > 0 {
         Ok(route_stations)
     } else {
-        Err(RustNSError::DatabaseError(
-            "No route stations found with given departure id.".into(),
-        ))
+        Ok(vec![])
     }
 }
 
@@ -150,6 +156,7 @@ pub async fn db_get_messages_by_departure_id(
 
 pub async fn db_insert_downloaded_api_data(
     pool: &MySqlPool,
+    station_code: String,
     departures: Vec<ApiDeparture>,
 ) -> Result<String, RustNSError> {
     for departure in departures {
@@ -179,6 +186,7 @@ pub async fn db_insert_downloaded_api_data(
         let departure_id = sqlx::query_as!(
             Departure,
             "INSERT INTO departures (
+            station_code,
             direction,
             train_name,
             planned_date_time,
@@ -190,7 +198,8 @@ pub async fn db_insert_downloaded_api_data(
             train_category,
             is_cancelled,
             departure_status
-        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            station_code,
             departure.direction,
             departure.name,
             departure.plannedDateTime,
