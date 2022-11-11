@@ -1,4 +1,4 @@
-use chrono::{DateTime, FixedOffset};
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use std::str::{self, FromStr};
 
@@ -23,8 +23,8 @@ pub enum DepartureStatus {
 pub struct DepartureList {
     pub direction: String,
     pub train_name: String,
-    pub planned_date_time: DateTime<FixedOffset>,
-    pub actual_date_time: DateTime<FixedOffset>,
+    pub planned_date_time: String,
+    pub actual_date_time: String,
     pub planned_track: String,
     pub train_category: TrainCategory,
     pub is_cancelled: bool,
@@ -51,19 +51,25 @@ impl<'de> Deserialize<'de> for DepartureList {
 
         let helper = Outer::deserialize(deserializer)?;
 
+        // TODO convert the
+
+        let actual_date_time =
+            NaiveDateTime::parse_from_str(&helper.plannedDateTime, "%Y-%m-%dT%H:%M:%S")
+                .unwrap()
+                .format("%Y-%m-%d %H:%M:%S")
+                .to_string();
+
+        let planned_date_time =
+            NaiveDateTime::parse_from_str(&helper.actualDateTime, "%Y-%m-%dT%H:%M:%S")
+                .unwrap()
+                .format("%Y-%m-%d %H:%M:%S")
+                .to_string();
+
         Ok(DepartureList {
             direction: helper.direction,
             train_name: helper.name,
-            planned_date_time: DateTime::parse_from_str(
-                &helper.plannedDateTime,
-                "%Y-%m-%dT%H:%M:%S%.f%z",
-            )
-            .unwrap(),
-            actual_date_time: DateTime::parse_from_str(
-                &helper.actualDateTime,
-                "%Y-%m-%dT%H:%M:%S%.f%z",
-            )
-            .unwrap(),
+            planned_date_time,
+            actual_date_time,
             planned_track: helper.plannedTrack,
             train_category: TrainCategory::from_str(&helper.trainCategory).unwrap(),
             is_cancelled: helper.cancelled,

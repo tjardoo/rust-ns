@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use sqlx::{mysql::MySqlRow, FromRow, Row};
 
@@ -18,10 +19,8 @@ pub struct FullDeparture {
     pub stationCode: String,
     pub direction: String,
     pub name: String,
-    pub plannedDateTime: String,
-    pub plannedTimeZoneOffset: i32,
-    pub actualDateTime: String,
-    pub actualTimeZoneOffset: i32,
+    pub plannedDateTime: NaiveDateTime,
+    pub actualDateTime: NaiveDateTime,
     pub plannedTrack: String,
     pub product: Product,
     pub trainCategory: TrainCategory,
@@ -38,10 +37,8 @@ pub struct Departure {
     pub stationCode: String,
     pub direction: String,
     pub name: String,
-    pub plannedDateTime: String,
-    pub plannedTimeZoneOffset: i32,
-    pub actualDateTime: String,
-    pub actualTimeZoneOffset: i32,
+    pub plannedDateTime: NaiveDateTime,
+    pub actualDateTime: NaiveDateTime,
     pub plannedTrack: String,
     pub productId: i32,
     pub trainCategory: String,
@@ -98,15 +95,21 @@ impl std::str::FromStr for TrainCategory {
 
 impl<'a> FromRow<'a, MySqlRow> for Departure {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
+        let planned_date_time =
+            NaiveDateTime::parse_from_str(row.get("planned_date_time"), "%Y-%m-%d %H:%M:%S")
+                .unwrap();
+
+        let actual_date_time =
+            NaiveDateTime::parse_from_str(row.get("acutal_date_time"), "%Y-%m-%d %H:%M:%S")
+                .unwrap();
+
         Ok(Departure {
             id: row.get("id"),
             stationCode: row.get("station_code"),
             direction: row.get("direction"),
             name: row.get("train_name"),
-            plannedDateTime: row.get("planned_date_time"),
-            plannedTimeZoneOffset: row.get("planned_time_zone_offset"),
-            actualDateTime: row.get("acutal_date_time"),
-            actualTimeZoneOffset: row.get("actual_time_zone_offset"),
+            plannedDateTime: planned_date_time,
+            actualDateTime: actual_date_time,
             plannedTrack: row.get("planned_track"),
             productId: row.get("product_id"),
             trainCategory: row.get("train_category"),

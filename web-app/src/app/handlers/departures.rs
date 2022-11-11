@@ -48,6 +48,8 @@ pub async fn get_station_departure_by_id(
 
     println!("Visiting {:#?}", url);
 
+    // TODO catch error message "error_message	"Departure with given id not found.""
+
     let response = awc_client
         .get(url)
         .send()

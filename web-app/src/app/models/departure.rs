@@ -1,4 +1,4 @@
-use chrono::{DateTime, FixedOffset};
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use std::str::{self, FromStr};
 
@@ -23,14 +23,15 @@ pub enum DepartureStatus {
 pub struct Departure {
     pub direction: String,
     pub train_name: String,
-    pub planned_date_time: DateTime<FixedOffset>,
-    pub actual_date_time: DateTime<FixedOffset>,
+    pub planned_date_time: String,
+    pub actual_date_time: String,
     pub planned_track: String,
     pub train_category: TrainCategory,
     pub is_cancelled: bool,
     pub route_stations: Vec<RouteStation>,
     pub messages: Option<Vec<Message>>,
     pub departure_status: String,
+    pub delay_in_minutes: i64,
 }
 
 #[derive(Serialize, Debug)]
@@ -108,25 +109,26 @@ impl<'de> Deserialize<'de> for Departure {
 
         let helper = Outer::deserialize(deserializer)?;
 
+        let actual_date_time =
+            NaiveDateTime::parse_from_str(&helper.actualDateTime, "%Y-%m-%dT%H:%M:%S").unwrap();
+
+        let planned_date_time =
+            NaiveDateTime::parse_from_str(&helper.plannedDateTime, "%Y-%m-%dT%H:%M:%S").unwrap();
+
+        let delay_in_minutes = planned_date_time - actual_date_time;
+
         Ok(Departure {
             direction: helper.direction,
             train_name: helper.name,
-            planned_date_time: DateTime::parse_from_str(
-                &helper.plannedDateTime,
-                "%Y-%m-%dT%H:%M:%S%.f%z",
-            )
-            .unwrap(),
-            actual_date_time: DateTime::parse_from_str(
-                &helper.actualDateTime,
-                "%Y-%m-%dT%H:%M:%S%.f%z",
-            )
-            .unwrap(),
+            planned_date_time: planned_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+            actual_date_time: actual_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
             planned_track: helper.plannedTrack,
             train_category: TrainCategory::from_str(&helper.trainCategory).unwrap(),
             is_cancelled: helper.cancelled,
             route_stations: helper.routeStations,
             messages: helper.messages,
             departure_status: helper.departureStatus,
+            delay_in_minutes: delay_in_minutes.num_minutes(),
         })
     }
 }

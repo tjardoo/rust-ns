@@ -1,6 +1,7 @@
 use crate::errors::RustNSError;
 use crate::models::api_departure::ApiDeparture;
 use crate::models::departure::{Departure, Message, Product, RouteStation};
+use chrono::NaiveDateTime;
 use sqlx::mysql::MySqlPool;
 
 pub async fn db_get_departures_by_station_code(
@@ -14,10 +15,8 @@ pub async fn db_get_departures_by_station_code(
         station_code as stationCode,
         direction,
         train_name as name,
-        planned_date_time as plannedDateTime,
-        planned_time_zone_offset as plannedTimeZoneOffset,
-        actual_date_time as actualDateTime,
-        actual_time_zone_offset as actualTimeZoneOffset,
+        planned_date_time as "plannedDateTime: NaiveDateTime",
+        actual_date_time as "actualDateTime: NaiveDateTime",
         planned_track as plannedTrack,
         product_id as productId,
         train_category as trainCategory,
@@ -50,10 +49,8 @@ pub async fn db_get_departure_by_id(pool: &MySqlPool, id: u32) -> Result<Departu
         station_code as stationCode,
         direction,
         train_name as name,
-        planned_date_time as plannedDateTime,
-        planned_time_zone_offset as plannedTimeZoneOffset,
-        actual_date_time as actualDateTime,
-        actual_time_zone_offset as actualTimeZoneOffset,
+        planned_date_time as "plannedDateTime: NaiveDateTime",
+        actual_date_time as "actualDateTime: NaiveDateTime",
         planned_track as plannedTrack,
         product_id as productId,
         train_category as trainCategory,
@@ -190,22 +187,20 @@ pub async fn db_insert_downloaded_api_data(
             direction,
             train_name,
             planned_date_time,
-            planned_time_zone_offset,
             actual_date_time,
-            actual_time_zone_offset,
             planned_track,
             product_id,
             train_category,
             is_cancelled,
             departure_status
-        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             station_code,
             departure.direction,
             departure.name,
-            departure.plannedDateTime,
-            departure.plannedTimeZoneOffset,
-            departure.actualDateTime,
-            departure.actualTimeZoneOffset,
+            NaiveDateTime::parse_from_str(&departure.plannedDateTime, "%Y-%m-%dT%H:%M:%S%.f%z")
+                .unwrap(),
+            NaiveDateTime::parse_from_str(&departure.actualDateTime, "%Y-%m-%dT%H:%M:%S%.f%z")
+                .unwrap(),
             departure.plannedTrack,
             product_id,
             departure.trainCategory,
