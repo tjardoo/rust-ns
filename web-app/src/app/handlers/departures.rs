@@ -5,6 +5,7 @@ use serde_json::Value;
 use std::env;
 
 use crate::app::errors::WebAppError;
+use crate::app::models::departure::Departure;
 
 pub async fn get_station_departure_overview() -> Result<HttpResponse, WebAppError> {
     let awc_client = Client::default();
@@ -52,13 +53,13 @@ pub async fn get_station_departure_by_id(
         .send()
         .await
         .unwrap()
-        .body()
+        .json::<Departure>()
         .await
         .unwrap();
 
-    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response).unwrap()).unwrap();
+    let json_response = web::Json(response);
 
-    println!("{:#?}", departures);
+    println!("{:#?}", json_response);
 
-    Ok(HttpResponse::Ok().json(departures))
+    Ok(HttpResponse::Ok().json(json_response))
 }
