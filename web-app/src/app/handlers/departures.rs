@@ -1,11 +1,11 @@
 use actix_web::web;
 use actix_web::HttpResponse;
 use awc::Client;
-use serde_json::Value;
 use std::env;
 
 use crate::app::errors::WebAppError;
 use crate::app::models::departure::Departure;
+use crate::app::models::departure_list::DepartureList;
 
 pub async fn get_station_departure_overview() -> Result<HttpResponse, WebAppError> {
     let awc_client = Client::default();
@@ -21,15 +21,15 @@ pub async fn get_station_departure_overview() -> Result<HttpResponse, WebAppErro
         .send()
         .await
         .unwrap()
-        .body()
+        .json::<Vec<DepartureList>>()
         .await
         .unwrap();
 
-    let departures: Value = serde_json::from_str(&std::str::from_utf8(&response).unwrap()).unwrap();
+    let json_response = web::Json(response);
 
-    println!("{:#?}", departures);
+    println!("{:#?}", json_response);
 
-    Ok(HttpResponse::Ok().json(departures))
+    Ok(HttpResponse::Ok().json(json_response))
 }
 
 pub async fn get_station_departure_by_id(
