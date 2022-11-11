@@ -21,6 +21,7 @@ async fn main() -> io::Result<()> {
             .app_data(shared_data.clone())
             .configure(routes::general_routes)
             .configure(routes::departure_routes)
+            .default_service(web::to(handlers::error::error_page_handler))
     };
 
     let app_url = env::var("APP_URL").expect("APP_URL is not set in the .env file.");
