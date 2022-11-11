@@ -4,6 +4,9 @@ use serde::{Deserialize, Serialize};
 pub enum TrainCategory {
     SPR,
     IC,
+    ICD,
+    ICE,
+    THA,
     UNKNOWN,
 }
 
