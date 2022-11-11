@@ -38,18 +38,18 @@ pub async fn get_departure_by_station_code_and_id(
 
     let full_departure = FullDeparture {
         id: departure.id,
-        stationCode: departure.stationCode,
+        station_code: departure.station_code,
         direction: departure.direction,
         name: departure.name,
-        plannedDateTime: departure.plannedDateTime,
-        actualDateTime: departure.actualDateTime,
-        plannedTrack: departure.plannedTrack,
+        planned_date_time: departure.planned_date_time,
+        actual_date_time: departure.actual_date_time,
+        planned_track: departure.planned_track,
         product,
-        trainCategory: TrainCategory::from_str(&departure.trainCategory).unwrap(),
-        cancelled: departure.cancelled,
-        routeStations: route_stations,
+        train_category: TrainCategory::from_str(&departure.train_category).unwrap(),
+        is_cancelled: departure.is_cancelled,
+        route_stations,
         messages: Some(messages),
-        departureStatus: departure.departureStatus,
+        departure_status: departure.departure_status,
     };
 
     Ok(HttpResponse::Ok().json(full_departure))

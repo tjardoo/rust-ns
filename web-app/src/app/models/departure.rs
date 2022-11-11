@@ -52,18 +52,17 @@ impl<'de> Deserialize<'de> for Departure {
         D: serde::Deserializer<'de>,
     {
         #[derive(Deserialize)]
-        #[allow(non_snake_case)]
         struct Outer {
             direction: String,
             name: String,
-            plannedDateTime: String,
-            actualDateTime: String,
-            plannedTrack: String,
-            trainCategory: String,
-            cancelled: bool,
-            routeStations: Vec<RouteStation>,
+            planned_date_time: String,
+            actual_date_time: String,
+            planned_track: String,
+            train_category: String,
+            is_cancelled: bool,
+            route_stations: Vec<RouteStation>,
             messages: Option<Vec<Message>>,
-            departureStatus: String,
+            departure_status: String,
         }
 
         impl<'de> Deserialize<'de> for RouteStation {
@@ -72,17 +71,16 @@ impl<'de> Deserialize<'de> for Departure {
                 D: serde::Deserializer<'de>,
             {
                 #[derive(Deserialize)]
-                #[allow(non_snake_case)]
                 struct InnerRouteStation {
-                    uicCode: String,
-                    mediumName: String,
+                    uic_code: String,
+                    medium_name: String,
                 }
 
                 let helper = InnerRouteStation::deserialize(deserializer)?;
 
                 Ok(RouteStation {
-                    code: helper.uicCode,
-                    name: helper.mediumName,
+                    code: helper.uic_code,
+                    name: helper.medium_name,
                 })
             }
         }
@@ -94,14 +92,14 @@ impl<'de> Deserialize<'de> for Departure {
             {
                 #[derive(Deserialize)]
                 struct InnerMessage {
-                    message: String,
+                    content: String,
                     style: String,
                 }
 
                 let helper = InnerMessage::deserialize(deserializer)?;
 
                 Ok(Message {
-                    content: helper.message,
+                    content: helper.content,
                     style: helper.style,
                 })
             }
@@ -109,25 +107,25 @@ impl<'de> Deserialize<'de> for Departure {
 
         let helper = Outer::deserialize(deserializer)?;
 
-        let actual_date_time =
-            NaiveDateTime::parse_from_str(&helper.actualDateTime, "%Y-%m-%dT%H:%M:%S").unwrap();
-
         let planned_date_time =
-            NaiveDateTime::parse_from_str(&helper.plannedDateTime, "%Y-%m-%dT%H:%M:%S").unwrap();
+            NaiveDateTime::parse_from_str(&helper.planned_date_time, "%Y-%m-%dT%H:%M:%S").unwrap();
 
-        let delay_in_minutes = planned_date_time - actual_date_time;
+        let actual_date_time =
+            NaiveDateTime::parse_from_str(&helper.actual_date_time, "%Y-%m-%dT%H:%M:%S").unwrap();
+
+        let delay_in_minutes = actual_date_time - planned_date_time;
 
         Ok(Departure {
             direction: helper.direction,
             train_name: helper.name,
             planned_date_time: planned_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
             actual_date_time: actual_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-            planned_track: helper.plannedTrack,
-            train_category: TrainCategory::from_str(&helper.trainCategory).unwrap(),
-            is_cancelled: helper.cancelled,
-            route_stations: helper.routeStations,
+            planned_track: helper.planned_track,
+            train_category: TrainCategory::from_str(&helper.train_category).unwrap(),
+            is_cancelled: helper.is_cancelled,
+            route_stations: helper.route_stations,
             messages: helper.messages,
-            departure_status: helper.departureStatus,
+            departure_status: helper.departure_status,
             delay_in_minutes: delay_in_minutes.num_minutes(),
         })
     }

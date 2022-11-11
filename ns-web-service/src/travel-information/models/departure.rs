@@ -13,67 +13,62 @@ pub enum TrainCategory {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct FullDeparture {
     pub id: u32,
-    pub stationCode: String,
+    pub station_code: String,
     pub direction: String,
     pub name: String,
-    pub plannedDateTime: NaiveDateTime,
-    pub actualDateTime: NaiveDateTime,
-    pub plannedTrack: String,
+    pub planned_date_time: NaiveDateTime,
+    pub actual_date_time: NaiveDateTime,
+    pub planned_track: String,
     pub product: Product,
-    pub trainCategory: TrainCategory,
-    pub cancelled: bool,
-    pub routeStations: Vec<RouteStation>,
+    pub train_category: TrainCategory,
+    pub is_cancelled: bool,
+    pub route_stations: Vec<RouteStation>,
     pub messages: Option<Vec<Message>>,
-    pub departureStatus: String,
+    pub departure_status: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct Departure {
     pub id: u32,
-    pub stationCode: String,
+    pub station_code: String,
     pub direction: String,
     pub name: String,
-    pub plannedDateTime: NaiveDateTime,
-    pub actualDateTime: NaiveDateTime,
-    pub plannedTrack: String,
-    pub productId: i32,
-    pub trainCategory: String,
-    pub cancelled: bool,
-    pub departureStatus: String,
+    pub planned_date_time: NaiveDateTime,
+    pub actual_date_time: NaiveDateTime,
+    pub planned_track: String,
+    pub product_id: i32,
+    pub train_category: String,
+    pub is_cancelled: bool,
+    pub departure_status: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct Product {
     pub id: u32,
     pub number: String,
-    pub categoryCode: String,
-    pub shortCategoryName: String,
-    pub longCategoryName: String,
-    pub operatorCode: String,
-    pub operatorName: String,
+    pub category_code: String,
+    pub short_category_name: String,
+    pub long_category_name: String,
+    pub operator_code: String,
+    pub operator_name: String,
     pub r#type: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct RouteStation {
     pub id: u32,
     pub departure_id: u32,
-    pub uicCode: String,
-    pub mediumName: String,
+    pub uic_code: String,
+    pub medium_name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct Message {
     pub id: u32,
     pub departure_id: u32,
-    pub message: String,
+    pub content: String,
     pub style: String,
 }
 
@@ -105,16 +100,16 @@ impl<'a> FromRow<'a, MySqlRow> for Departure {
 
         Ok(Departure {
             id: row.get("id"),
-            stationCode: row.get("station_code"),
+            station_code: row.get("station_code"),
             direction: row.get("direction"),
             name: row.get("train_name"),
-            plannedDateTime: planned_date_time,
-            actualDateTime: actual_date_time,
-            plannedTrack: row.get("planned_track"),
-            productId: row.get("product_id"),
-            trainCategory: row.get("train_category"),
-            cancelled: row.get("is_cancelled"),
-            departureStatus: row.get("departure_status"),
+            planned_date_time,
+            actual_date_time,
+            planned_track: row.get("planned_track"),
+            product_id: row.get("product_id"),
+            train_category: row.get("train_category"),
+            is_cancelled: row.get("is_cancelled"),
+            departure_status: row.get("departure_status"),
         })
     }
 }
@@ -124,11 +119,11 @@ impl<'a> FromRow<'a, MySqlRow> for Product {
         Ok(Product {
             id: row.get("id"),
             number: row.get("product_number"),
-            categoryCode: row.get("category_code"),
-            shortCategoryName: row.get("short_category_code"),
-            longCategoryName: row.get("long_category_code"),
-            operatorCode: row.get("operator_code"),
-            operatorName: row.get("operator_name"),
+            category_code: row.get("category_code"),
+            short_category_name: row.get("short_category_name"),
+            long_category_name: row.get("long_category_name"),
+            operator_code: row.get("operator_code"),
+            operator_name: row.get("operator_name"),
             r#type: row.get("product_type"),
         })
     }
@@ -139,8 +134,8 @@ impl<'a> FromRow<'a, MySqlRow> for RouteStation {
         Ok(RouteStation {
             id: row.get("id"),
             departure_id: row.get("departure_id"),
-            uicCode: row.get("uic_code"),
-            mediumName: row.get("medium_name"),
+            uic_code: row.get("uic_code"),
+            medium_name: row.get("medium_name"),
         })
     }
 }
@@ -150,7 +145,7 @@ impl<'a> FromRow<'a, MySqlRow> for Message {
         Ok(Message {
             id: row.get("id"),
             departure_id: row.get("departure_id"),
-            message: row.get("content"),
+            content: row.get("content"),
             style: row.get("style"),
         })
     }

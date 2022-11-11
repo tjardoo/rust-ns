@@ -20,8 +20,8 @@ CREATE TABLE products
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     product_number VARCHAR(50) NOT NULL,
     category_code VARCHAR(50) NOT NULL,
-    short_category_code VARCHAR(50) NOT NULL,
-    long_category_code VARCHAR(50) NOT NULL,
+    short_category_name VARCHAR(50) NOT NULL,
+    long_category_name VARCHAR(50) NOT NULL,
     operator_code VARCHAR(50) NOT NULL,
     operator_name VARCHAR(50) NOT NULL,
     product_type VARCHAR(50) NOT NULL,
@@ -61,7 +61,7 @@ INSERT INTO messages(id, departure_id, content, style)
 INSERT INTO route_stations(id, departure_id, uic_code, medium_name)
     VALUES(1, 1, '8400059', 'Sloterdijk');
 
-INSERT INTO products(id, product_number, category_code, short_category_code, long_category_code, operator_code, operator_name, product_type)
+INSERT INTO products(id, product_number, category_code, short_category_name, long_category_name, operator_code, operator_name, product_type)
     VALUES(1, '3939', 'IC', 'NS Intercity', 'Intercity', 'NS', 'NS', 'TRAIN');
 
 INSERT INTO

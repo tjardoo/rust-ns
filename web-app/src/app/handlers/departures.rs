@@ -25,6 +25,8 @@ pub async fn get_station_departure_overview() -> Result<HttpResponse, WebAppErro
         .await
         .unwrap();
 
+    // TODO catch no results
+
     let json_response = web::Json(response);
 
     println!("{:#?}", json_response);

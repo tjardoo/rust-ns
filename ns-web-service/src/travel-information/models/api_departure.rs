@@ -48,7 +48,6 @@ pub struct ApiRouteStation {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct ApiMessage {
     pub message: String,
     pub style: String,

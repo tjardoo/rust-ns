@@ -12,16 +12,16 @@ pub async fn db_get_departures_by_station_code(
         Departure,
         r#"SELECT 
         id,
-        station_code as stationCode,
+        station_code as station_code,
         direction,
         train_name as name,
-        planned_date_time as "plannedDateTime: NaiveDateTime",
-        actual_date_time as "actualDateTime: NaiveDateTime",
-        planned_track as plannedTrack,
-        product_id as productId,
-        train_category as trainCategory,
-        is_cancelled as "cancelled: bool",
-        departure_status as departureStatus
+        planned_date_time as "planned_date_time: NaiveDateTime",
+        actual_date_time as "actual_date_time: NaiveDateTime",
+        planned_track,
+        product_id,
+        train_category,
+        is_cancelled as "is_cancelled: bool",
+        departure_status
         FROM departures
         WHERE station_code = ?
         "#,
@@ -46,16 +46,16 @@ pub async fn db_get_departure_by_id(pool: &MySqlPool, id: u32) -> Result<Departu
         Departure,
         r#"SELECT 
         id,
-        station_code as stationCode,
+        station_code,
         direction,
         train_name as name,
-        planned_date_time as "plannedDateTime: NaiveDateTime",
-        actual_date_time as "actualDateTime: NaiveDateTime",
-        planned_track as plannedTrack,
-        product_id as productId,
-        train_category as trainCategory,
-        is_cancelled as "cancelled: bool",
-        departure_status as departureStatus
+        planned_date_time as "planned_date_time: NaiveDateTime",
+        actual_date_time as "actual_date_time: NaiveDateTime",
+        planned_track,
+        product_id,
+        train_category,
+        is_cancelled as "is_cancelled: bool",
+        departure_status
         FROM departures
         WHERE id = ?
         "#,
@@ -83,11 +83,11 @@ pub async fn db_get_product_by_id(
         r#"SELECT 
         id,
         product_number as number,
-        category_code as categoryCode,
-        short_category_code as shortCategoryName,
-        long_category_code as longCategoryName,
-        operator_code as operatorCode,
-        operator_name as operatorName,
+        category_code,
+        short_category_name,
+        long_category_name,
+        operator_code,
+        operator_name,
         product_type as type
         FROM products
         WHERE id = ?
@@ -110,8 +110,8 @@ pub async fn db_get_route_stations_by_departure_id(
         r#"SELECT 
         id,
         departure_id,
-        uic_code as uicCode,
-        medium_name as mediumName
+        uic_code,
+        medium_name
         FROM route_stations
         WHERE departure_id = ?
         "#,
@@ -137,7 +137,7 @@ pub async fn db_get_messages_by_departure_id(
         r#"SELECT 
         id,
         departure_id,
-        content as message,
+        content,
         style
         FROM messages
         WHERE departure_id = ?
@@ -162,8 +162,8 @@ pub async fn db_insert_downloaded_api_data(
             "INSERT INTO products (
             product_number,
             category_code,
-            short_category_code,
-            long_category_code,
+            short_category_name,
+            long_category_name,
             operator_code,
             operator_name,
             product_type
