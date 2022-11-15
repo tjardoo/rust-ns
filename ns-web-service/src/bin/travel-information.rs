@@ -27,14 +27,29 @@ async fn main() -> io::Result<()> {
 
     let db_pool = MySqlPool::connect(&database_url).await.unwrap();
 
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    fern::Dispatch::new()
+        .format(|out, message, record| {
+            out.finish(format_args!(
+                "{}[{}][{}] {}",
+                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
+                record.target(),
+                record.level(),
+                message
+            ))
+        })
+        .level(log::LevelFilter::Debug)
+        .level_for("sqlx::query", log::LevelFilter::Error)
+        .chain(std::io::stdout())
+        .chain(fern::log_file("output.log")?)
+        .apply()
+        .unwrap();
 
     let shared_data = web::Data::new(AppState { pool: db_pool });
 
     let app = move || {
         App::new()
             .wrap(NormalizePath::trim())
-            .wrap(Logger::new("%a %r %s %b %{Referer}i %{User-Agent}i %T"))
+            .wrap(Logger::default())
             .app_data(shared_data.clone())
             .configure(general_routes)
             .configure(departures)
