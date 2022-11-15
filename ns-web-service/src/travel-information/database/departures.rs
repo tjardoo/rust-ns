@@ -180,6 +180,11 @@ pub async fn db_insert_downloaded_api_data(
         .await?
         .last_insert_id();
 
+        let planned_track = match departure.plannedTrack {
+            Some(p) => p,
+            None => String::from("N/A"),
+        };
+
         let departure_id = sqlx::query_as!(
             Departure,
             "INSERT INTO departures (
@@ -201,7 +206,7 @@ pub async fn db_insert_downloaded_api_data(
                 .unwrap(),
             NaiveDateTime::parse_from_str(&departure.actualDateTime, "%Y-%m-%dT%H:%M:%S%.f%z")
                 .unwrap(),
-            departure.plannedTrack,
+            planned_track,
             product_id,
             departure.trainCategory,
             departure.cancelled,

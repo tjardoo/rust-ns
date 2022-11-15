@@ -19,7 +19,7 @@ pub struct ApiDeparture {
     pub plannedTimeZoneOffset: i32,
     pub actualDateTime: String,
     pub actualTimeZoneOffset: i32,
-    pub plannedTrack: String,
+    pub plannedTrack: Option<String>,
     pub product: ApiProduct,
     pub trainCategory: String,
     pub cancelled: bool,

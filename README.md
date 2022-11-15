@@ -21,7 +21,12 @@ To view all departures for a certain station: ``/station/{station_code}/departur
 
 To view the details of a departure: ``/station/{station_code}/departures/{departure_id}``.
 
-You can use the station_code ``HN`` or ``ASD`` to test.
+### Some station codes to test
+
+HN = Hoorn
+ASD = Amsterdam Centraal
+ASS = Amsterdam Sloterdijk
+UT = Utrecht Centraal
 
 ### /web-app
 

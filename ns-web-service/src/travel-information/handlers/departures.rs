@@ -71,9 +71,13 @@ pub async fn fetch_departures_by_station_code(
 
     let ns_api_key = env::var("NS_API_KEY").expect("NS_API_KEY is not set in the .env file.");
 
+    let max_journeys =
+        env::var("NS_API_MAX_JOURNEYS").expect("NS_API_MAX_JOURNEYS is not set in the .env file.");
+
     let url = format!(
-        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}",
-        station_code
+        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}&maxJourneys={}",
+        station_code,
+        max_journeys
     );
 
     let response = awc::ClientBuilder::new()
@@ -117,9 +121,13 @@ pub async fn download_departures_by_station_code(
 
     let ns_api_key = env::var("NS_API_KEY").expect("NS_API_KEY is not set in the .env file.");
 
+    let max_journeys =
+        env::var("NS_API_MAX_JOURNEYS").expect("NS_API_MAX_JOURNEYS is not set in the .env file.");
+
     let url = format!(
-        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}",
-        station_code
+        "https://gateway.apiportal.ns.nl/reisinformatie-api/api/v2/departures?station={}&maxJourneys={}",
+        station_code,
+        max_journeys
     );
 
     let response = awc::ClientBuilder::new()
@@ -137,6 +145,8 @@ pub async fn download_departures_by_station_code(
     let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
 
     let inner_value = &value["payload"]["departures"];
+
+    println!("{:?}", inner_value);
 
     let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
 
