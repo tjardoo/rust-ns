@@ -94,6 +94,12 @@ pub async fn fetch_departures_by_station_code(
 
     let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
 
+    if &value["code"] == 404 {
+        return Ok(
+            HttpResponse::Ok().body(format!("Station code `{}` is not valid.", station_code))
+        );
+    }
+
     let inner_value = &value["payload"]["departures"];
 
     println!("{:#?}", inner_value);
@@ -143,6 +149,12 @@ pub async fn download_departures_by_station_code(
         .await?;
 
     let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
+
+    if &value["code"] == 404 {
+        return Ok(
+            HttpResponse::Ok().body(format!("Station code `{}` is not valid.", station_code))
+        );
+    }
 
     let inner_value = &value["payload"]["departures"];
 
