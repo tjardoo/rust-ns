@@ -7,10 +7,28 @@
     <link href="/css/output.css" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-yellow">
-        <h1 class="text-3xl text-blue">
-            Platform: {{ title }}
-        </h1>
+    <div class="grid grid-cols-4 gap-4">
+        <div class="col-span-2">
+            <div class="px-5 font-bold text-blue text-9xl">14:01</div>
+        </div>
+        <div class="col-span-2">
+            <div class="px-5 font-bold text-right text-blue text-9xl">                
+                Sprinter
+                <img src="/images/ns-logo.svg" class="inline w-auto h-20" />
+            </div>
+        </div>
+        <div class="col-span-4">
+            <div class="px-5 font-bold text-blue text-9xl">Amsterdam Centraal</div>
+        </div>
+        <div class="col-span-4 pb-3 mt-6 border-b border-blue">
+            <div class="px-5 text-5xl font-bold text-red">Rijdt niet verder dan Weesp</div>
+        </div>
+        <div class="col-span-4">
+            <div class="px-5 text-blue text-8xl">Via Baarn, Hilversum, Media Park, Bussum Zuid, Naarden-Bussum en Weesp</div>
+        </div>
+    </div>
+    <div class="absolute bottom-0 w-full py-2 bg-blue">
+        <div class="px-5 text-6xl text-white">Hierna/next: 14:10 IC Schiphol Airport</div>
     </div>
 </body>
 </html>

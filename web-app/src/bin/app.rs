@@ -28,6 +28,7 @@ async fn main() -> io::Result<()> {
             .configure(routes::departure_routes)
             .configure(routes::station_routes)
             .configure(routes::platform_routes)
+            .service(Files::new("/images/", "./static/img/").prefer_utf8(true))
             .service(Files::new("/css/", "./static/css/").prefer_utf8(true))
             .default_service(web::to(handlers::error::error_page_handler))
     };

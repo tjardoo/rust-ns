@@ -7,7 +7,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      sans: ["Frutiger", "Istok Web", "sans-serif"],
+      sans: ["NS Sans", "Frutiger", "Istok Web", "sans-serif"],
     },
     extend: {
     },
