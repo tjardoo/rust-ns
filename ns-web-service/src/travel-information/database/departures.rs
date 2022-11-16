@@ -217,18 +217,39 @@ pub async fn db_insert_downloaded_api_data(
         .last_insert_id();
 
         for route_station in departure.routeStations {
-            let station_id = sqlx::query_as!(
+            let optional_station = sqlx::query_as!(
                 Station,
-                "INSERT INTO stations (
+                r#"SELECT 
+                id,
                 uic_code,
                 medium_name
-            ) values (?, ?)",
-                route_station.uicCode,
-                route_station.mediumName,
+                FROM stations
+                WHERE uic_code = ?
+                "#,
+                route_station.uicCode
             )
-            .execute(pool)
-            .await?
-            .last_insert_id();
+            .fetch_optional(pool)
+            .await
+            .expect("Failed to execute query");
+
+            let station_id: u32;
+
+            if let Some(station) = optional_station {
+                station_id = station.id;
+            } else {
+                station_id = sqlx::query_as!(
+                    Station,
+                    "INSERT INTO stations (
+                        uic_code,
+                        medium_name
+                    ) values (?, ?)",
+                    route_station.uicCode,
+                    route_station.mediumName
+                )
+                .execute(pool)
+                .await?
+                .last_insert_id() as u32;
+            };
 
             sqlx::query_as!(
                 RouteStation,
@@ -237,11 +258,10 @@ pub async fn db_insert_downloaded_api_data(
                 station_id
             ) values (?, ?)",
                 departure_id,
-                station_id,
+                station_id
             )
             .execute(pool)
-            .await?
-            .last_insert_id();
+            .await?;
         }
 
         for message in departure.messages.unwrap() {
