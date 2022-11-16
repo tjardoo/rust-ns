@@ -24,7 +24,7 @@ pub struct FullDeparture {
     pub product: Product,
     pub train_category: TrainCategory,
     pub is_cancelled: bool,
-    pub route_stations: Vec<RouteStation>,
+    pub route_stations: Vec<Station>,
     pub messages: Option<Vec<Message>>,
     pub departure_status: String,
 }
@@ -57,11 +57,17 @@ pub struct Product {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Station {
+    pub id: u32,
+    pub uic_code: String,
+    pub medium_name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RouteStation {
     pub id: u32,
     pub departure_id: u32,
-    pub uic_code: String,
-    pub medium_name: String,
+    pub station_id: u32,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -129,13 +135,22 @@ impl<'a> FromRow<'a, MySqlRow> for Product {
     }
 }
 
+impl<'a> FromRow<'a, MySqlRow> for Station {
+    fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
+        Ok(Station {
+            id: row.get("id"),
+            uic_code: row.get("uic_code"),
+            medium_name: row.get("medium_name"),
+        })
+    }
+}
+
 impl<'a> FromRow<'a, MySqlRow> for RouteStation {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
         Ok(RouteStation {
             id: row.get("id"),
             departure_id: row.get("departure_id"),
-            uic_code: row.get("uic_code"),
-            medium_name: row.get("medium_name"),
+            station_id: row.get("station_id"),
         })
     }
 }

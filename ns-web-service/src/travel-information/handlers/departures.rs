@@ -6,6 +6,7 @@ use crate::models::departure::{FullDeparture, TrainCategory};
 use crate::state::AppState;
 use crate::{database::departures::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
+use log::info;
 use openssl::ssl::{SslConnector, SslVerifyMode};
 use serde_json::Value;
 use std::env;
@@ -31,8 +32,7 @@ pub async fn get_departure_by_station_code_and_id(
 
     let product = db_get_product_by_id(&app_state.pool, departure_id).await?;
 
-    let route_stations =
-        db_get_route_stations_by_departure_id(&app_state.pool, departure_id).await?;
+    let stations = db_get_stations_by_departure_id(&app_state.pool, departure_id).await?;
 
     let messages = db_get_messages_by_departure_id(&app_state.pool, departure_id).await?;
 
@@ -47,7 +47,7 @@ pub async fn get_departure_by_station_code_and_id(
         product,
         train_category: TrainCategory::from_str(&departure.train_category).unwrap(),
         is_cancelled: departure.is_cancelled,
-        route_stations,
+        route_stations: stations,
         messages: Some(messages),
         departure_status: departure.departure_status,
     };
@@ -135,6 +135,8 @@ pub async fn download_departures_by_station_code(
         station_code,
         max_journeys
     );
+
+    info!("NS API: {}", url);
 
     let response = awc::ClientBuilder::new()
         .connector(connector)

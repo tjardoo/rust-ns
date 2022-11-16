@@ -1,6 +1,6 @@
 use crate::errors::RustNSError;
 use crate::models::api_departure::ApiDeparture;
-use crate::models::departure::{Departure, Message, Product, RouteStation};
+use crate::models::departure::{Departure, Message, Product, Station};
 use chrono::NaiveDateTime;
 use sqlx::mysql::MySqlPool;
 
@@ -101,19 +101,19 @@ pub async fn db_get_product_by_id(
     Ok(product_row)
 }
 
-pub async fn db_get_route_stations_by_departure_id(
+pub async fn db_get_stations_by_departure_id(
     pool: &MySqlPool,
     departure_id: u32,
-) -> Result<Vec<RouteStation>, RustNSError> {
-    let route_stations = sqlx::query_as!(
-        RouteStation,
+) -> Result<Vec<Station>, RustNSError> {
+    let stations = sqlx::query_as!(
+        Station,
         r#"SELECT 
-        id,
-        departure_id,
+        stations.id,
         uic_code,
         medium_name
-        FROM route_stations
-        WHERE departure_id = ?
+        FROM stations
+        JOIN route_stations ON route_stations.station_id = stations.id
+        WHERE route_stations.departure_id = ?
         "#,
         departure_id
     )
@@ -121,8 +121,8 @@ pub async fn db_get_route_stations_by_departure_id(
     .await
     .expect("Failed to execute query");
 
-    if route_stations.len() > 0 {
-        Ok(route_stations)
+    if stations.len() > 0 {
+        Ok(stations)
     } else {
         Ok(vec![])
     }
@@ -217,16 +217,27 @@ pub async fn db_insert_downloaded_api_data(
         .last_insert_id();
 
         for route_station in departure.routeStations {
+            let station_id = sqlx::query_as!(
+                Station,
+                "INSERT INTO stations (
+                uic_code,
+                medium_name
+            ) values (?, ?)",
+                route_station.uicCode,
+                route_station.mediumName,
+            )
+            .execute(pool)
+            .await?
+            .last_insert_id();
+
             sqlx::query_as!(
                 RouteStation,
                 "INSERT INTO route_stations (
                 departure_id,
-                uic_code,
-                medium_name
-            ) values (?, ?, ?)",
+                station_id
+            ) values (?, ?)",
                 departure_id,
-                route_station.uicCode,
-                route_station.mediumName,
+                station_id,
             )
             .execute(pool)
             .await?
