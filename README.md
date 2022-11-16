@@ -67,9 +67,9 @@ cargo run --bin app
 
 In the ``.env`` file you can change the station code that is used to display the list of departures.
 
-### Extra
+## Support
 
-#### Example station codes
+### Example station codes
 
 HN = Hoorn
 
@@ -79,8 +79,14 @@ ASS = Amsterdam Sloterdijk
 
 UT = Utrecht Centraal
 
-### Resources
+## Resources
 
 [https://apiportal.ns.nl/docs/services/reisinformatie-api/operations/getDepartures](https://apiportal.ns.nl/docs/services/reisinformatie-api/operations/getDepartures)
 
 [https://www.ns.nl/platform/fundamentals/colours.html](https://www.ns.nl/platform/fundamentals/colours.html)
+
+[https://www.ns.nl/platform/resources.html](https://www.ns.nl/platform/resources.html)
+
+## Disclaimer
+
+NS/NS Reizigers is part of Nederlandse Spoorwegen B.V. and/or partners and is not associated with this project. This project is an independent application that is developed with the aim of learning the programming language Rust. This project makes use of the NS API. In the tab [#resources](#resources) you can find links to their API, branding guide and resources.
