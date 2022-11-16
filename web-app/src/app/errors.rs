@@ -5,6 +5,7 @@ use std::fmt;
 #[derive(Debug, Serialize)]
 pub enum WebAppError {
     InternalServerError(String),
+    TeraError(String),
 }
 
 #[derive(Debug, Serialize)]
@@ -20,6 +21,11 @@ impl WebAppError {
 
                 msg.into()
             }
+            WebAppError::TeraError(msg) => {
+                println!("Tera templating error: {:?}", msg);
+
+                msg.into()
+            }
         }
     }
 }
@@ -28,6 +34,7 @@ impl error::ResponseError for WebAppError {
     fn status_code(&self) -> StatusCode {
         match self {
             WebAppError::InternalServerError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
+            WebAppError::TeraError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
