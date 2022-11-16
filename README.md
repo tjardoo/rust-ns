@@ -52,6 +52,11 @@ cargo run --bin travel-information
 Server with multiple routes to display the information that it receives from the NS Web Service API.
 
 ```bash
+npx tailwindcss -i ./static/input.css -o ./static/css/output.css --watch # for development
+npx tailwindcss -i ./static/input.css -o ./static/css/output.css
+```
+
+```bash
 cd web-app
 cargo run --bin app
 ```
@@ -73,3 +78,9 @@ ASD = Amsterdam Centraal
 ASS = Amsterdam Sloterdijk
 
 UT = Utrecht Centraal
+
+### Resources
+
+[https://apiportal.ns.nl/docs/services/reisinformatie-api/operations/getDepartures](https://apiportal.ns.nl/docs/services/reisinformatie-api/operations/getDepartures)
+
+[https://www.ns.nl/platform/fundamentals/colours.html](https://www.ns.nl/platform/fundamentals/colours.html)
