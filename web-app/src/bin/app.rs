@@ -1,6 +1,7 @@
 #[path = "../app/mod.rs"]
 mod app;
 
+use actix_files::Files;
 use actix_web::{middleware::Logger, middleware::NormalizePath, web, App, HttpServer};
 use app::{handlers, routes, state};
 use dotenv::dotenv;
@@ -16,7 +17,7 @@ async fn main() -> io::Result<()> {
     let shared_data = web::Data::new(state::AppState {});
 
     let app = move || {
-        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*.html")).unwrap();
+        let tera = Tera::new(concat!(env!("CARGO_MANIFEST_DIR"), "/static/**/*.html")).unwrap();
 
         App::new()
             .wrap(NormalizePath::trim())
@@ -27,6 +28,7 @@ async fn main() -> io::Result<()> {
             .configure(routes::departure_routes)
             .configure(routes::station_routes)
             .configure(routes::platform_routes)
+            .service(Files::new("/css/", "./static/css/").prefer_utf8(true))
             .default_service(web::to(handlers::error::error_page_handler))
     };
 
