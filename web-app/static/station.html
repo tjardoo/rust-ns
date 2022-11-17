@@ -3,18 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Istok+Web:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <link href="/css/output.css" rel="stylesheet">
 </head>
 <body>
-    <div class="bg-yellow">
-        <h1 class="text-3xl text-blue">
-            Station: {{ title }}
-        </h1>
+    <div class="flex justify-end bg-blue">
+        <div class="px-5 py-3 text-5xl font-bold text-white">13:24</div>
     </div>
+    <div class="grid w-full grid-cols-12 bg-lighter-blue">
+        <div class="col-span-1">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">Vertrek</div>
+        </div>
+        <div class="col-span-6">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">Naar / Opmerkingen</div>
+        </div>
+        <div class="col-span-2">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">Spoor</div>
+        </div>
+        <div class="col-span-3">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">Trein</div>
+        </div>
+    </div>
+    <div class="grid w-full grid-cols-12">
+        <div class="col-span-1">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
+                13:25
+                <div class="text-xl text-red">+11</div>
+            </div>
+        </div>
+        <div class="col-span-6">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">
+                Amsterdam Centraal
+                <div class="text-xl">via Sloterdijk</div>
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-2">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                3
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-3">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
+                Intercity
+            </div>
+        </div>
+    </div>
+
+    <div class="grid w-full grid-cols-12 bg-lighter-blue">
+        <div class="col-span-1">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
+                13:45
+                <div class="text-xl text-red">+1</div>
+            </div>
+        </div>
+        <div class="col-span-6">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">
+                Hoorn
+                <div class="text-xl">via Bloemendaal, Uitgeest, Alkmaar, Heerhugowaard</div>
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-2">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                8
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-3">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
+                Sprinter
+            </div>
+        </div>
+    </div>
+
+    <div class="grid w-full grid-cols-12">
+        <div class="col-span-1">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-grey-600">
+                13:55
+            </div>
+        </div>
+        <div class="col-span-6">
+            <div class="px-5 py-5 text-2xl font-bold text-grey-600">
+                Amsterdam Centraal
+                <div class="text-xl text-red">Rijdt niet door een storing in een tunnel</div>
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-2">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
+                -
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-3">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
+                <img src="/images/ns-logo-gray.svg" class="inline w-auto h-5" />
+                Intercity
+            </div>
+        </div>
+    </div>
+
+    <div class="grid w-full grid-cols-12 bg-lighter-blue">
+        <div class="col-span-1">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
+                13:55
+            </div>
+        </div>
+        <div class="col-span-6">
+            <div class="px-5 py-5 text-2xl font-bold text-blue">
+                Den Haag Centraal
+                <div class="text-xl">via Heemstede-A., Hillegom, Leiden C., Laan v NOI</div>
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-2">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                1
+            </div>
+        </div>
+        <div class="flex items-stretch col-span-3">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
+                <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
+                Sprinter
+            </div>
+        </div>
+    </div>
+    
+    <div class="absolute bottom-0 w-full py-6 bg-blue"></div>
 </body>
 </html>

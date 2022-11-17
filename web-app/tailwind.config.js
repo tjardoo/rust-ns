@@ -21,6 +21,9 @@ module.exports = {
       "light-blue": {
         DEFAULT: "#0063D3",
       },
+      "lighter-blue": {
+        DEFAULT: "#E0E8F2",
+      },
       "white": {
         DEFAULT: "#FFFFFF",
       },
