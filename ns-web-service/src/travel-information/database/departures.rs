@@ -3,7 +3,7 @@ use crate::models::departure::SimpleDeparture;
 use crate::models::message::Message;
 use crate::models::product::Product;
 use crate::models::station::Station;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use sqlx::mysql::MySqlPool;
 
 pub async fn db_get_departure_by_id(
@@ -17,8 +17,8 @@ pub async fn db_get_departure_by_id(
         station_code,
         direction,
         train_name as name,
-        planned_date_time as "planned_date_time: NaiveDateTime",
-        actual_date_time as "actual_date_time: NaiveDateTime",
+        planned_date_time as "planned_date_time: DateTime<Utc>",
+        actual_date_time as "actual_date_time: DateTime<Utc>",
         planned_track,
         product_id,
         train_category,

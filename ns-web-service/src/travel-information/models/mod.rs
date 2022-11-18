@@ -1,4 +1,5 @@
 pub mod departure;
+pub mod departure_data;
 pub mod message;
 pub mod platform_data;
 pub mod product;

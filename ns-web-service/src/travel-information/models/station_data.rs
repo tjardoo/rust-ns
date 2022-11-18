@@ -1,6 +1,9 @@
+use super::departure::SimpleDeparture;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::departure::SimpleDeparture;
+#[path = "../../travel-information/helpers/date_time_helper.rs"]
+pub mod date_time_helper;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StationData {
@@ -16,5 +19,7 @@ pub struct StationDataDepartures {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StationDataDetails {
     pub station_code: String,
-    pub current_date_time: String,
+
+    #[serde(with = "date_time_helper::readable_date_format")]
+    pub current_date_time: DateTime<Utc>,
 }

@@ -1,4 +1,4 @@
-use crate::handlers::departures::*;
+use crate::handlers::departure::*;
 use crate::handlers::download::*;
 use crate::handlers::general::*;
 use crate::handlers::platform::*;
@@ -20,10 +20,10 @@ pub fn departure_routes(cfg: &mut web::ServiceConfig) {
     )
     .route(
         "/station/{station_code}/platform/{platform_id}",
-        web::get().to(get_departures_by_station_platform),
+        web::get().to(get_departures_by_platform),
     )
     .route(
-        "/station/{station_code}/departures/{departure_id}",
+        "/station/{station_code}/departure/{departure_id}",
         web::get().to(get_departure_by_id),
     );
 }

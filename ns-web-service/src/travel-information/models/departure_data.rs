@@ -1,4 +1,4 @@
-use super::departure::SimpleDeparture;
+use super::departure::Departure;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -6,19 +6,13 @@ use serde::{Deserialize, Serialize};
 pub mod date_time_helper;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PlatformData {
-    pub data: PlatformDataDepartures,
-    pub details: PlatformDataDetails,
+pub struct DepartureData {
+    pub data: Departure,
+    pub details: DepartureDataDetails,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PlatformDataDepartures {
-    pub current: Option<SimpleDeparture>,
-    pub next: Option<SimpleDeparture>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PlatformDataDetails {
+pub struct DepartureDataDetails {
     pub station_code: String,
 
     #[serde(with = "date_time_helper::readable_date_format")]

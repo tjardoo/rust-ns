@@ -1,7 +1,7 @@
 use crate::errors::RustNSError;
 use crate::models::departure::SimpleDeparture;
 use crate::models::station_data::{StationData, StationDataDepartures, StationDataDetails};
-use chrono::{NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 use sqlx::mysql::MySqlPool;
 
 pub async fn db_get_departures_by_station(
@@ -15,8 +15,8 @@ pub async fn db_get_departures_by_station(
         station_code as station_code,
         direction,
         train_name as name,
-        planned_date_time as "planned_date_time: NaiveDateTime",
-        actual_date_time as "actual_date_time: NaiveDateTime",
+        planned_date_time as "planned_date_time: DateTime<Utc>",
+        actual_date_time as "actual_date_time: DateTime<Utc>",
         planned_track,
         product_id,
         train_category,
@@ -36,7 +36,7 @@ pub async fn db_get_departures_by_station(
         data: StationDataDepartures { departures },
         details: StationDataDetails {
             station_code,
-            current_date_time: Utc::now().format("%Y-%m-%d %H:%M:%S").to_string(),
+            current_date_time: Utc::now(),
         },
     })
 }

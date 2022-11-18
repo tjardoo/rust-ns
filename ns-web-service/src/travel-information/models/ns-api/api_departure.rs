@@ -1,6 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use super::{api_message::ApiMessage, api_product::ApiProduct, api_station::ApiRouteStation};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]

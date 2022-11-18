@@ -1,8 +1,10 @@
-use chrono::NaiveDateTime;
+use super::{message::Message, product::Product, station::Station, train_category::TrainCategory};
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{mysql::MySqlRow, FromRow, Row};
 
-use super::{message::Message, product::Product, station::Station, train_category::TrainCategory};
+#[path = "../../travel-information/helpers/date_time_helper.rs"]
+pub mod date_time_helper;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Departure {
@@ -10,8 +12,13 @@ pub struct Departure {
     pub station_code: String,
     pub direction: String,
     pub name: String,
-    pub planned_date_time: NaiveDateTime,
-    pub actual_date_time: NaiveDateTime,
+
+    #[serde(with = "date_time_helper::readable_date_format")]
+    pub planned_date_time: DateTime<Utc>,
+
+    #[serde(with = "date_time_helper::readable_date_format")]
+    pub actual_date_time: DateTime<Utc>,
+
     pub planned_track: String,
     pub product: Product,
     pub train_category: TrainCategory,
@@ -27,8 +34,13 @@ pub struct SimpleDeparture {
     pub station_code: String,
     pub direction: String,
     pub name: String,
-    pub planned_date_time: NaiveDateTime,
-    pub actual_date_time: NaiveDateTime,
+
+    #[serde(with = "date_time_helper::readable_date_format")]
+    pub planned_date_time: DateTime<Utc>,
+
+    #[serde(with = "date_time_helper::readable_date_format")]
+    pub actual_date_time: DateTime<Utc>,
+
     pub planned_track: String,
     pub product_id: i32,
     pub train_category: String,
@@ -38,13 +50,8 @@ pub struct SimpleDeparture {
 
 impl<'a> FromRow<'a, MySqlRow> for SimpleDeparture {
     fn from_row(row: &'a MySqlRow) -> Result<Self, sqlx::Error> {
-        let planned_date_time =
-            NaiveDateTime::parse_from_str(row.get("planned_date_time"), "%Y-%m-%d %H:%M:%S")
-                .unwrap();
-
-        let actual_date_time =
-            NaiveDateTime::parse_from_str(row.get("acutal_date_time"), "%Y-%m-%d %H:%M:%S")
-                .unwrap();
+        let planned_date_time = DateTime::from_utc(row.get("planned_date_time"), Utc);
+        let actual_date_time = DateTime::from_utc(row.get("acutal_date_time"), Utc);
 
         Ok(SimpleDeparture {
             id: row.get("id"),
