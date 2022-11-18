@@ -3,8 +3,12 @@ use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
 use std::{env, io};
 
+#[path = "../travel-information/models/ns-api/mod.rs"]
+mod api_models;
 #[path = "../travel-information/database/mod.rs"]
 mod database;
+#[path = "../travel-information/download/mod.rs"]
+mod download;
 #[path = "../travel-information/error/errors.rs"]
 mod errors;
 #[path = "../travel-information/handlers/mod.rs"]
@@ -52,7 +56,7 @@ async fn main() -> io::Result<()> {
             .wrap(Logger::default())
             .app_data(shared_data.clone())
             .configure(general_routes)
-            .configure(departures)
+            .configure(departure_routes)
             .default_service(web::to(handlers::error::error_page_handler))
     };
 
