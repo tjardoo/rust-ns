@@ -22,5 +22,9 @@ pub fn departures(cfg: &mut web::ServiceConfig) {
     .route(
         "/station/{station_code}/departures/{departure_id}",
         web::get().to(get_departure_by_station_code_and_id),
+    )
+    .route(
+        "/station/{station_code}/platform/{platform_id}",
+        web::get().to(get_departure_by_station_code_and_platform_code),
     );
 }

@@ -55,6 +55,50 @@ pub async fn get_departure_by_station_code_and_id(
     Ok(HttpResponse::Ok().json(full_departure))
 }
 
+pub async fn get_departure_by_station_code_and_platform_code(
+    app_state: web::Data<AppState>,
+    params: web::Path<(String, String)>,
+) -> Result<HttpResponse, RustNSError> {
+    let (station_code, platform_code) = params.into_inner();
+
+    let departure_row = db_get_departure_by_station_code_and_platform_code(
+        &app_state.pool,
+        station_code,
+        platform_code,
+    )
+    .await?;
+
+    if let None = departure_row {
+        return Ok(HttpResponse::Ok().body("Er is momenteel geen reisinformatie beschikbaar"));
+    }
+
+    let departure = departure_row.unwrap();
+
+    let product = db_get_product_by_id(&app_state.pool, departure.id).await?;
+
+    let stations = db_get_stations_by_departure_id(&app_state.pool, departure.id).await?;
+
+    let messages = db_get_messages_by_departure_id(&app_state.pool, departure.id).await?;
+
+    let full_departure = FullDeparture {
+        id: departure.id,
+        station_code: departure.station_code,
+        direction: departure.direction,
+        name: departure.name,
+        planned_date_time: departure.planned_date_time,
+        actual_date_time: departure.actual_date_time,
+        planned_track: departure.planned_track,
+        product,
+        train_category: TrainCategory::from_str(&departure.train_category).unwrap(),
+        is_cancelled: departure.is_cancelled,
+        route_stations: stations,
+        messages: Some(messages),
+        departure_status: departure.departure_status,
+    };
+
+    Ok(HttpResponse::Ok().json(full_departure))
+}
+
 pub async fn fetch_departures_by_station_code(
     _app_state: web::Data<AppState>,
     params: web::Path<String>,

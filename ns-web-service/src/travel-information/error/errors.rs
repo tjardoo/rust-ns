@@ -7,6 +7,7 @@ use std::fmt;
 pub enum RustNSError {
     DatabaseError(String),
     InternalServerError(String),
+    NoInformationAvailable(),
 }
 
 #[derive(Debug, Serialize)]
@@ -27,6 +28,11 @@ impl RustNSError {
 
                 msg.into()
             }
+            RustNSError::NoInformationAvailable() => {
+                println!("Er is momenteel geen reisinformatie beschikbaar");
+
+                "Er is momenteel geen reisinformatie beschikbaar".into()
+            }
         }
     }
 }
@@ -36,6 +42,7 @@ impl error::ResponseError for RustNSError {
         match self {
             RustNSError::DatabaseError(_msg) => StatusCode::NOT_FOUND,
             RustNSError::InternalServerError(_msg) => StatusCode::BAD_REQUEST,
+            RustNSError::NoInformationAvailable() => StatusCode::NO_CONTENT,
         }
     }
 

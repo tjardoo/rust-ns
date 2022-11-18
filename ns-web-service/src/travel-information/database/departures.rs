@@ -74,6 +74,44 @@ pub async fn db_get_departure_by_id(pool: &MySqlPool, id: u32) -> Result<Departu
     }
 }
 
+pub async fn db_get_departure_by_station_code_and_platform_code(
+    pool: &MySqlPool,
+    station_code: String,
+    platform_code: String,
+) -> Result<Option<Departure>, RustNSError> {
+    let departure_row = sqlx::query_as!(
+        Departure,
+        r#"SELECT 
+        id,
+        station_code,
+        direction,
+        train_name as name,
+        planned_date_time as "planned_date_time: NaiveDateTime",
+        actual_date_time as "actual_date_time: NaiveDateTime",
+        planned_track,
+        product_id,
+        train_category,
+        is_cancelled as "is_cancelled: bool",
+        departure_status
+        FROM departures
+        WHERE station_code = ?
+        AND
+        planned_track = ?
+        "#,
+        station_code,
+        platform_code,
+    )
+    .fetch_optional(pool)
+    .await
+    .expect("Failed to execute query");
+
+    if let Some(departure) = departure_row {
+        Ok(Some(departure))
+    } else {
+        Ok(None)
+    }
+}
+
 pub async fn db_get_product_by_id(
     pool: &MySqlPool,
     product_id: u32,
