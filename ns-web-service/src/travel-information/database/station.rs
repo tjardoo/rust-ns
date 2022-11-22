@@ -7,6 +7,7 @@ use sqlx::mysql::MySqlPool;
 pub async fn db_get_departures_by_station(
     pool: &MySqlPool,
     station_code: String,
+    limit: u32,
 ) -> Result<StationData, RustNSError> {
     let departures = sqlx::query_as!(
         SimpleDeparture,
@@ -24,9 +25,10 @@ pub async fn db_get_departures_by_station(
         departure_status
         FROM departures
         WHERE station_code = ?
-        LIMIT 20
+        LIMIT ?
         "#,
-        station_code
+        station_code,
+        limit
     )
     .fetch_all(pool)
     .await

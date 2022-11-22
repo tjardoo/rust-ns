@@ -7,20 +7,18 @@ use super::train_category::TrainCategory;
 #[derive(Serialize, Debug)]
 pub struct Departure {
     pub direction: String,
-    pub train_name: String,
-    pub planned_date_time: String,
-    pub actual_date_time: String,
+    pub name: String,
+    pub planned_time: String,
     pub planned_track: String,
     pub train_category: TrainCategory,
     pub is_cancelled: bool,
-    pub route_stations: Vec<RouteStation>,
-    pub messages: Option<Vec<Message>>,
-    pub departure_status: String,
+    // pub stations: Vec<Station>,
+    // pub messages: Option<Vec<Message>>,
     pub delay_in_minutes: i64,
 }
 
 #[derive(Serialize, Debug)]
-pub struct RouteStation {
+pub struct Station {
     pub code: String,
     pub name: String,
 }
@@ -45,25 +43,24 @@ impl<'de> Deserialize<'de> for Departure {
             planned_track: String,
             train_category: String,
             is_cancelled: bool,
-            route_stations: Vec<RouteStation>,
-            messages: Option<Vec<Message>>,
-            departure_status: String,
+            // route_stations: Vec<Station>,
+            // messages: Option<Vec<Message>>,
         }
 
-        impl<'de> Deserialize<'de> for RouteStation {
+        impl<'de> Deserialize<'de> for Station {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
                 D: serde::Deserializer<'de>,
             {
                 #[derive(Deserialize)]
-                struct InnerRouteStation {
+                struct InnerStation {
                     uic_code: String,
                     medium_name: String,
                 }
 
-                let helper = InnerRouteStation::deserialize(deserializer)?;
+                let helper = InnerStation::deserialize(deserializer)?;
 
-                Ok(RouteStation {
+                Ok(Station {
                     code: helper.uic_code,
                     name: helper.medium_name,
                 })
@@ -93,24 +90,22 @@ impl<'de> Deserialize<'de> for Departure {
         let helper = Outer::deserialize(deserializer)?;
 
         let planned_date_time =
-            NaiveDateTime::parse_from_str(&helper.planned_date_time, "%Y-%m-%dT%H:%M:%S").unwrap();
+            NaiveDateTime::parse_from_str(&helper.planned_date_time, "%Y-%m-%d %H:%M:%S").unwrap();
 
         let actual_date_time =
-            NaiveDateTime::parse_from_str(&helper.actual_date_time, "%Y-%m-%dT%H:%M:%S").unwrap();
+            NaiveDateTime::parse_from_str(&helper.actual_date_time, "%Y-%m-%d %H:%M:%S").unwrap();
 
         let delay_in_minutes = actual_date_time - planned_date_time;
 
         Ok(Departure {
             direction: helper.direction,
-            train_name: helper.name,
-            planned_date_time: planned_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-            actual_date_time: actual_date_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+            name: helper.name,
+            planned_time: planned_date_time.format("%H:%M").to_string(),
             planned_track: helper.planned_track,
             train_category: TrainCategory::from_str(&helper.train_category).unwrap(),
             is_cancelled: helper.is_cancelled,
-            route_stations: helper.route_stations,
-            messages: helper.messages,
-            departure_status: helper.departure_status,
+            // stations: helper.route_stations,
+            // messages: helper.messages,
             delay_in_minutes: delay_in_minutes.num_minutes(),
         })
     }

@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="flex justify-end bg-blue">
-        <div class="px-5 py-3 text-5xl font-bold text-white">13:24</div>
+        <div class="px-5 py-3 text-5xl font-bold text-white">{{ current_time }}</div>
     </div>
     <div class="grid w-full grid-cols-12 bg-lighter-blue">
         <div class="col-span-1">
@@ -24,108 +24,62 @@
             <div class="px-5 py-5 text-2xl font-bold text-blue">Trein</div>
         </div>
     </div>
+    {% for departure in departures %}
+    {% if departure.is_cancelled == false %}
     <div class="grid w-full grid-cols-12">
         <div class="col-span-1">
             <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
-                13:25
-                <div class="text-xl text-red">+11</div>
+                {{ departure.planned_time }}
+                {% if departure.delay_in_minutes > 0 %}
+                <div class="text-xl text-red">+{{ departure.delay_in_minutes }}</div>
+                {% endif %}
             </div>
         </div>
         <div class="col-span-6">
             <div class="px-5 py-5 text-2xl font-bold text-blue">
-                Amsterdam Centraal
+                {{ departure.direction }}
                 <div class="text-xl">via Sloterdijk</div>
             </div>
         </div>
         <div class="flex items-stretch col-span-2">
             <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                3
+                {{ departure.planned_track }}
             </div>
         </div>
         <div class="flex items-stretch col-span-3">
             <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
                 <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
-                Intercity
+                {{ departure.train_category }}
             </div>
         </div>
     </div>
-
-    <div class="grid w-full grid-cols-12 bg-lighter-blue">
-        <div class="col-span-1">
-            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
-                13:45
-                <div class="text-xl text-red">+1</div>
-            </div>
-        </div>
-        <div class="col-span-6">
-            <div class="px-5 py-5 text-2xl font-bold text-blue">
-                Hoorn
-                <div class="text-xl">via Bloemendaal, Uitgeest, Alkmaar, Heerhugowaard</div>
-            </div>
-        </div>
-        <div class="flex items-stretch col-span-2">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                8
-            </div>
-        </div>
-        <div class="flex items-stretch col-span-3">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
-                Sprinter
-            </div>
-        </div>
-    </div>
-
+    {% else %}
     <div class="grid w-full grid-cols-12">
         <div class="col-span-1">
             <div class="px-5 py-5 text-2xl font-bold text-right text-grey-600">
-                13:55
+                {{ departure.planned_time }}
             </div>
         </div>
         <div class="col-span-6">
             <div class="px-5 py-5 text-2xl font-bold text-grey-600">
-                Amsterdam Centraal
-                <div class="text-xl text-red">Rijdt niet door een storing in een tunnel</div>
+                {{ departure.direction }}
+                <div class="text-xl">via Sloterdijk</div>
             </div>
         </div>
         <div class="flex items-stretch col-span-2">
             <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
-                -
+                {{ departure.planned_track }}
             </div>
         </div>
         <div class="flex items-stretch col-span-3">
             <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
                 <img src="/images/ns-logo-gray.svg" class="inline w-auto h-5" />
-                Intercity
+                {{ departure.train_category }}
             </div>
         </div>
     </div>
-
-    <div class="grid w-full grid-cols-12 bg-lighter-blue">
-        <div class="col-span-1">
-            <div class="px-5 py-5 text-2xl font-bold text-right text-blue">
-                13:55
-            </div>
-        </div>
-        <div class="col-span-6">
-            <div class="px-5 py-5 text-2xl font-bold text-blue">
-                Den Haag Centraal
-                <div class="text-xl">via Heemstede-A., Hillegom, Leiden C., Laan v NOI</div>
-            </div>
-        </div>
-        <div class="flex items-stretch col-span-2">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                1
-            </div>
-        </div>
-        <div class="flex items-stretch col-span-3">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
-                Sprinter
-            </div>
-        </div>
-    </div>
-    
+    {% endif %}
+    {% endfor %}
     <div class="absolute bottom-0 w-full py-6 bg-blue"></div>
 </body>
 </html>

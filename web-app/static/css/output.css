@@ -529,12 +529,12 @@ video {
   grid-column: span 4 / span 4;
 }
 
-.col-span-6 {
-  grid-column: span 6 / span 6;
-}
-
 .col-span-1 {
   grid-column: span 1 / span 1;
+}
+
+.col-span-6 {
+  grid-column: span 6 / span 6;
 }
 
 .col-span-3 {
@@ -557,28 +557,24 @@ video {
   display: grid;
 }
 
+.h-screen {
+  height: 100vh;
+}
+
 .h-20 {
   height: 5rem;
-}
-
-.h-8 {
-  height: 2rem;
-}
-
-.h-6 {
-  height: 1.5rem;
 }
 
 .h-5 {
   height: 1.25rem;
 }
 
-.w-auto {
-  width: auto;
-}
-
 .w-full {
   width: 100%;
+}
+
+.w-auto {
+  width: auto;
 }
 
 .grid-cols-4 {
@@ -624,6 +620,10 @@ video {
   background-color: rgb(224 232 242 / var(--tw-bg-opacity));
 }
 
+.p-12 {
+  padding: 3rem;
+}
+
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -653,16 +653,13 @@ video {
   padding-bottom: 0.75rem;
 }
 
-.text-left {
-  text-align: left;
-}
-
-.text-center {
-  text-align: center;
-}
-
 .text-right {
   text-align: right;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+  line-height: 1;
 }
 
 .text-9xl {
@@ -680,16 +677,6 @@ video {
   line-height: 1;
 }
 
-.text-6xl {
-  font-size: 3.75rem;
-  line-height: 1;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -704,6 +691,11 @@ video {
   font-weight: 700;
 }
 
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
 .text-blue {
   --tw-text-opacity: 1;
   color: rgb(0 48 130 / var(--tw-text-opacity));
@@ -712,31 +704,6 @@ video {
 .text-red {
   --tw-text-opacity: 1;
   color: rgb(219 0 41 / var(--tw-text-opacity));
-}
-
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-grey-400 {
-  --tw-text-opacity: 1;
-  color: rgb(106 106 122 / var(--tw-text-opacity));
-}
-
-.text-grey-300 {
-  --tw-text-opacity: 1;
-  color: rgb(81 81 100 / var(--tw-text-opacity));
-}
-
-.text-grey-200 {
-  --tw-text-opacity: 1;
-  color: rgb(57 57 77 / var(--tw-text-opacity));
-}
-
-.text-grey-500 {
-  --tw-text-opacity: 1;
-  color: rgb(131 131 144 / var(--tw-text-opacity));
 }
 
 .text-grey-600 {

@@ -25,7 +25,6 @@ async fn main() -> io::Result<()> {
             .app_data(shared_data.clone())
             .app_data(web::Data::new(tera))
             .configure(routes::general_routes)
-            .configure(routes::departure_routes)
             .configure(routes::station_routes)
             .configure(routes::platform_routes)
             .service(Files::new("/images/", "./static/img/").prefer_utf8(true))
