@@ -2,22 +2,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use std::str::{self, FromStr};
 
-#[derive(Debug, Deserialize, Serialize)]
-pub enum TrainCategory {
-    SPR,
-    IC,
-    ICD,
-    ICE,
-    THA,
-    UNKNOWN,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-#[allow(non_camel_case_types)]
-pub enum DepartureStatus {
-    INCOMING,
-    ON_STATION,
-}
+use super::train_category::TrainCategory;
 
 #[derive(Serialize, Debug)]
 pub struct Departure {
@@ -128,21 +113,5 @@ impl<'de> Deserialize<'de> for Departure {
             departure_status: helper.departure_status,
             delay_in_minutes: delay_in_minutes.num_minutes(),
         })
-    }
-}
-
-impl str::FromStr for TrainCategory {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "SPR" => Ok(TrainCategory::SPR),
-            "IC" => Ok(TrainCategory::IC),
-            "ICD" => Ok(TrainCategory::ICD),
-            "ICE" => Ok(TrainCategory::ICE),
-            "THA" => Ok(TrainCategory::THA),
-            "UNKOWN" => Ok(TrainCategory::UNKNOWN),
-            _ => Err(format!("'{}' is not a valid value for TrainCategory", s)),
-        }
     }
 }
