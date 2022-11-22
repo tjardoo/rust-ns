@@ -3,7 +3,7 @@ use actix_web::{
     web, Error, HttpResponse,
 };
 use awc::Client;
-use chrono::Utc;
+use chrono::{FixedOffset, Utc};
 use serde_json::Value;
 use std::env;
 
@@ -41,7 +41,10 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
         view_file_name = "no_data.html";
     }
 
-    let current_time = Utc::now().format("%H:%M").to_string();
+    let current_time = Utc::now()
+        .with_timezone(&FixedOffset::east(3600))
+        .format("%H:%M")
+        .to_string();
 
     let mut ctx = tera::Context::new();
 
