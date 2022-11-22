@@ -35,17 +35,21 @@ cd ns-web-service
 cargo run --bin travel-information
 ```
 
-#### List of departures
+### API
 
-``/station/{station_code}/departures``.
+- [Station Departure Overview](docs/api/station.md)
+- [Platform Departures](docs/api/platform.md)
+- [Departure Details](docs/api/departure.md)
 
-#### Departure details
+#### Routes
 
-``/station/{station_code}/departures/{departure_id}``.
+``/station/{station_code}``
 
-#### Download new departures
+``/station/{station_code}/download``
 
-``/station/{station_code}/departures/download``.
+``/station/{station_code}/platform/{platform_id}``
+
+``/station/{station_code}/departure/{departure_id}``
 
 ### Web App
 
