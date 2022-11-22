@@ -16,31 +16,46 @@ Used to get the JSON response with the current and next departure of a specific 
 {
     "data": {
         "current": {
-            "id": 23,
-            "station_code": "HN",
-            "direction": "Nijmegen",
-            "name": "NS  3069",
-            "planned_date_time": "2022-11-18 18:08:00",
-            "actual_date_time": "2022-11-18 18:08:00",
-            "planned_track": "2",
-            "product_id": 23,
+            "id": 7,
+            "station_code": "ASS",
+            "direction": "Amersfoort Schothorst",
+            "name": "NS  1657",
+            "planned_date_time": "2022-11-18 15:39:00",
+            "actual_date_time": "2022-11-18 15:39:00",
+            "planned_track": "12",
+            "product": {
+                "id": 7,
+                "number": "1657",
+                "category_code": "IC",
+                "short_category_name": "NS Intercity",
+                "long_category_name": "Intercity",
+                "operator_code": "NS",
+                "operator_name": "NS",
+                "type": "TRAIN"
+            },
             "train_category": "IC",
             "is_cancelled": false,
+            "route_stations": [
+                {
+                    "id": 14,
+                    "uic_code": "8400058",
+                    "medium_name": "Amsterdam C."
+                },
+                {
+                    "id": 18,
+                    "uic_code": "8400322",
+                    "medium_name": "Hilversum"
+                },
+                {
+                    "id": 19,
+                    "uic_code": "8400055",
+                    "medium_name": "Amersfoort C."
+                }
+            ],
+            "messages": [],
             "departure_status": "INCOMING"
         },
-        "next": {
-            "id": 25,
-            "station_code": "HN",
-            "direction": "Hoofddorp",
-            "name": "NS  3371",
-            "planned_date_time": "2022-11-18 18:19:00",
-            "actual_date_time": "2022-11-18 18:19:00",
-            "planned_track": "2",
-            "product_id": 25,
-            "train_category": "SPR",
-            "is_cancelled": false,
-            "departure_status": "INCOMING"
-        }
+        "next": null,
     },
     "details": {
         "station_code": "HN",

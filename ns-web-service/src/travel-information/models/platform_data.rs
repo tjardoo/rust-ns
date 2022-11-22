@@ -1,4 +1,4 @@
-use super::departure::SimpleDeparture;
+use super::departure::Departure;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -13,8 +13,8 @@ pub struct PlatformData {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlatformDataDepartures {
-    pub current: Option<SimpleDeparture>,
-    pub next: Option<SimpleDeparture>,
+    pub current: Option<Departure>,
+    pub next: Option<Departure>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
