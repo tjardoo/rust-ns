@@ -541,16 +541,12 @@ video {
   grid-column: span 3 / span 3;
 }
 
-.mt-12 {
-  margin-top: 3rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .mt-6 {
   margin-top: 1.5rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
 }
 
 .inline {
@@ -717,4 +713,15 @@ video {
 .text-grey-700 {
   --tw-text-opacity: 1;
   color: rgb(181 181 188 / var(--tw-text-opacity));
+}
+
+.platform-icon {
+  display: inline-flex;
+  justify-content: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 50px;
+  width: 50px;
+  background-position: 50% 50%;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSIgdmlld0JveD0iMCAwIDQ1IDQ1Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjtzdHJva2U6IzAwMzA4MjtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPnBsYXRmb3JtPC90aXRsZT48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSI5LjUgMC41IDkuNSA5LjUgMC41IDkuNSAwLjUgNDQuNSA0NC41IDQ0LjUgNDQuNSAwLjUgOS41IDAuNSIvPjwvZz48L2c+PC9zdmc+");
 }

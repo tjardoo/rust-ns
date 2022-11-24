@@ -54,13 +54,15 @@
                             <span class="text-blue">{{ message.content }}</span>
                             {% endif %}
                         {% endfor %}
-                    </div>                    
-                {% endif %}                
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="flex items-stretch col-span-2">
             <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
-                {{ departure.planned_track }}
+                <div class="flex items-stretch platform-icon">
+                    <div class="self-center">{{ departure.planned_track }}</div>
+                </div>
             </div>
         </div>
         <div class="flex items-stretch col-span-3">
@@ -93,7 +95,9 @@
         </div>
         <div class="flex items-stretch col-span-2">
             <div class="self-center px-5 py-5 text-2xl font-bold text-grey-700">
-                {{ departure.planned_track }}
+                <div class="flex items-stretch platform-icon">
+                    <div class="self-center">{{ departure.planned_track }}</div>
+                </div>
             </div>
         </div>
         <div class="flex items-stretch col-span-3">
