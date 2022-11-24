@@ -1,5 +1,6 @@
+use crate::database::departures::enhance_simple_departure;
 use crate::errors::RustNSError;
-use crate::models::departure::SimpleDeparture;
+use crate::models::departure::{Departure, SimpleDeparture};
 use crate::models::station_data::{StationData, StationDataDepartures, StationDataDetails};
 use chrono::{DateTime, Utc};
 use sqlx::mysql::MySqlPool;
@@ -9,7 +10,7 @@ pub async fn db_get_departures_by_station(
     station_code: String,
     limit: u32,
 ) -> Result<StationData, RustNSError> {
-    let departures = sqlx::query_as!(
+    let simple_departures = sqlx::query_as!(
         SimpleDeparture,
         r#"SELECT 
         id,
@@ -33,6 +34,16 @@ pub async fn db_get_departures_by_station(
     .fetch_all(pool)
     .await
     .expect("Failed to execute query");
+
+    let mut departures: Vec<Departure> = Vec::new();
+
+    for simple_departure in simple_departures {
+        let departure = enhance_simple_departure(pool, Some(simple_departure))
+            .await
+            .unwrap();
+
+        departures.push(departure);
+    }
 
     Ok(StationData {
         data: StationDataDepartures { departures },

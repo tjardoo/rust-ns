@@ -12,14 +12,24 @@ pub struct Departure {
     pub planned_track: String,
     pub train_category: TrainCategory,
     pub is_cancelled: bool,
-    // pub stations: Vec<Station>,
-    // pub messages: Option<Vec<Message>>,
+    pub product: Product,
+    pub stations: Vec<Station>,
+    pub messages: Option<Vec<Message>>,
     pub delay_in_minutes: i64,
+    pub has_route_stations: bool,
+    pub has_messages: bool,
+}
+
+#[derive(Serialize, Debug)]
+pub struct Product {
+    pub number: String,
+    pub category_code: String,
+    pub short_category_name: String,
+    pub long_category_name: String,
 }
 
 #[derive(Serialize, Debug)]
 pub struct Station {
-    pub code: String,
     pub name: String,
 }
 
@@ -43,8 +53,33 @@ impl<'de> Deserialize<'de> for Departure {
             planned_track: String,
             train_category: String,
             is_cancelled: bool,
-            // route_stations: Vec<Station>,
-            // messages: Option<Vec<Message>>,
+            product: Product,
+            route_stations: Vec<Station>,
+            messages: Option<Vec<Message>>,
+        }
+
+        impl<'de> Deserialize<'de> for Product {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                #[derive(Deserialize)]
+                struct InnerProduct {
+                    number: String,
+                    category_code: String,
+                    short_category_name: String,
+                    long_category_name: String,
+                }
+
+                let helper = InnerProduct::deserialize(deserializer)?;
+
+                Ok(Product {
+                    number: helper.number,
+                    category_code: helper.category_code,
+                    short_category_name: helper.short_category_name,
+                    long_category_name: helper.long_category_name,
+                })
+            }
         }
 
         impl<'de> Deserialize<'de> for Station {
@@ -54,14 +89,12 @@ impl<'de> Deserialize<'de> for Departure {
             {
                 #[derive(Deserialize)]
                 struct InnerStation {
-                    uic_code: String,
                     medium_name: String,
                 }
 
                 let helper = InnerStation::deserialize(deserializer)?;
 
                 Ok(Station {
-                    code: helper.uic_code,
                     name: helper.medium_name,
                 })
             }
@@ -97,6 +130,13 @@ impl<'de> Deserialize<'de> for Departure {
 
         let delay_in_minutes = actual_date_time - planned_date_time;
 
+        let has_route_stations = helper.route_stations.len() > 0;
+
+        let has_messages = match helper.messages {
+            None => false,
+            Some(_) => true,
+        };
+
         Ok(Departure {
             direction: helper.direction,
             name: helper.name,
@@ -104,9 +144,12 @@ impl<'de> Deserialize<'de> for Departure {
             planned_track: helper.planned_track,
             train_category: TrainCategory::from_str(&helper.train_category).unwrap(),
             is_cancelled: helper.is_cancelled,
-            // stations: helper.route_stations,
-            // messages: helper.messages,
+            product: helper.product,
+            stations: helper.route_stations,
+            messages: helper.messages,
             delay_in_minutes: delay_in_minutes.num_minutes(),
+            has_route_stations,
+            has_messages,
         })
     }
 }

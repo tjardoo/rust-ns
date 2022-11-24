@@ -38,7 +38,24 @@
         <div class="col-span-6">
             <div class="px-5 py-5 text-2xl font-bold text-blue">
                 {{ departure.direction }}
-                <div class="text-xl">via Sloterdijk</div>
+                {% if departure.has_route_stations %}
+                <div class="text-xl">
+                    via
+                    {% for station in departure.stations %}
+                        {{ station.name }}{% if loop.last == false %},{% endif %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                    <div class="text-xl">
+                        {% for message in departure.messages %}
+                            {% if message.style == 'WARNING' %}
+                            <span class="text-red">{{ message.content }}</span>
+                            {% else %}
+                            <span class="text-blue">{{ message.content }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>                    
+                {% endif %}                
             </div>
         </div>
         <div class="flex items-stretch col-span-2">
@@ -49,32 +66,40 @@
         <div class="flex items-stretch col-span-3">
             <div class="self-center px-5 py-5 text-2xl font-bold text-blue">
                 <img src="/images/ns-logo.svg" class="inline w-auto h-5" />
-                {{ departure.train_category }}
+                {{ departure.product.long_category_name }}
             </div>
         </div>
     </div>
     {% else %}
     <div class="grid w-full grid-cols-12">
         <div class="col-span-1">
-            <div class="px-5 py-5 text-2xl font-bold text-right text-grey-600">
+            <div class="px-5 py-5 text-2xl font-bold text-right text-grey-700">
                 {{ departure.planned_time }}
             </div>
         </div>
         <div class="col-span-6">
-            <div class="px-5 py-5 text-2xl font-bold text-grey-600">
+            <div class="px-5 py-5 text-2xl font-bold text-grey-700">
                 {{ departure.direction }}
-                <div class="text-xl">via Sloterdijk</div>
+                <div class="text-xl">
+                    {% for message in departure.messages %}
+                        {% if message.style == 'WARNING' %}
+                        <span class="text-red">{{ message.content }}</span>
+                        {% else %}
+                        <span class="text-blue">{{ message.content }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <div class="flex items-stretch col-span-2">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-700">
                 {{ departure.planned_track }}
             </div>
         </div>
         <div class="flex items-stretch col-span-3">
-            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-600">
+            <div class="self-center px-5 py-5 text-2xl font-bold text-grey-700">
                 <img src="/images/ns-logo-gray.svg" class="inline w-auto h-5" />
-                {{ departure.train_category }}
+                {{ departure.product.long_category_name }}
             </div>
         </div>
     </div>

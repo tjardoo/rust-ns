@@ -1,4 +1,4 @@
-use super::departure::SimpleDeparture;
+use super::departure::Departure;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -13,7 +13,7 @@ pub struct StationData {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StationDataDepartures {
-    pub departures: Vec<SimpleDeparture>,
+    pub departures: Vec<Departure>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

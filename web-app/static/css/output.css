@@ -706,7 +706,7 @@ video {
   color: rgb(219 0 41 / var(--tw-text-opacity));
 }
 
-.text-grey-600 {
+.text-grey-700 {
   --tw-text-opacity: 1;
-  color: rgb(156 156 166 / var(--tw-text-opacity));
+  color: rgb(181 181 188 / var(--tw-text-opacity));
 }

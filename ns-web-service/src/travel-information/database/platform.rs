@@ -1,10 +1,8 @@
 use crate::errors::RustNSError;
-use crate::models::departure::{Departure, SimpleDeparture};
+use crate::models::departure::SimpleDeparture;
 use crate::models::platform_data::{PlatformData, PlatformDataDepartures, PlatformDataDetails};
-use crate::models::train_category::TrainCategory;
 use chrono::{DateTime, Utc};
 use sqlx::mysql::MySqlPool;
-use std::str::FromStr;
 
 use super::departures::*;
 
@@ -52,44 +50,5 @@ pub async fn db_get_departures_by_platform(
             station_code,
             current_date_time: Utc::now(),
         },
-    })
-}
-
-async fn enhance_simple_departure(
-    pool: &MySqlPool,
-    simple_departure: Option<SimpleDeparture>,
-) -> Option<Departure> {
-    if simple_departure.is_none() {
-        return None;
-    }
-
-    let simple_departure = simple_departure.unwrap();
-
-    let product = db_get_product_by_id(pool, simple_departure.id)
-        .await
-        .unwrap();
-
-    let stations = db_get_stations_by_departure_id(pool, simple_departure.id)
-        .await
-        .unwrap();
-
-    let messages = db_get_messages_by_departure_id(pool, simple_departure.id)
-        .await
-        .unwrap();
-
-    Some(Departure {
-        id: simple_departure.id,
-        station_code: simple_departure.station_code,
-        direction: simple_departure.direction,
-        name: simple_departure.name,
-        planned_date_time: simple_departure.planned_date_time,
-        actual_date_time: simple_departure.actual_date_time,
-        planned_track: simple_departure.planned_track,
-        product,
-        train_category: TrainCategory::from_str(&simple_departure.train_category).unwrap(),
-        is_cancelled: simple_departure.is_cancelled,
-        route_stations: stations,
-        messages: Some(messages),
-        departure_status: simple_departure.departure_status,
     })
 }
