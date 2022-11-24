@@ -9,26 +9,39 @@
 <body>
     <div class="grid grid-cols-4 gap-4">
         <div class="col-span-2">
-            <div class="px-5 font-bold text-blue text-9xl">14:01</div>
+            <div class="px-5 font-bold text-blue text-9xl">{{ departure.planned_time }}</div>
         </div>
         <div class="col-span-2">
-            <div class="px-5 font-bold text-right text-blue text-9xl">                
-                Sprinter
+            <div class="px-5 font-bold text-right text-blue text-9xl">
+                {{ departure.product.long_category_name }}
                 <img src="/images/ns-logo.svg" class="inline w-auto h-20" />
             </div>
         </div>
         <div class="col-span-4">
-            <div class="px-5 font-bold text-blue text-9xl">Amsterdam Centraal</div>
+            <div class="px-5 mt-6 font-bold text-blue text-9xl">{{ departure.direction }}</div>
         </div>
         <div class="col-span-4 pb-3 mt-12 border-b border-blue">
-            <div class="px-5 text-5xl font-bold text-red">Rijdt niet verder dan Weesp</div>
+            <div class="px-5 text-5xl font-bold text-red">
+                {% for message in departure.messages %}
+                    {% if message.style == 'WARNING' %}
+                    <span class="text-red">{{ message.content }}</span>
+                    {% else %}
+                    <span class="text-blue">{{ message.content }}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
         <div class="col-span-4">
-            <div class="px-5 text-blue text-8xl">Via Baarn, Hilversum, Media Park, Bussum Zuid, Naarden-Bussum en Weesp</div>
+            <div class="px-5 text-blue text-8xl">                    
+                {% for station in departure.stations %}
+                    {% if loop.first == true %}via {% endif %}
+                    {{ station.name }}{% if loop.last == false %},{% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
     <div class="absolute bottom-0 w-full py-2 bg-blue">
-        <div class="px-5 text-6xl text-white">Hierna/next: 14:10 IC Schiphol Airport</div>
+        <div class="px-5 text-6xl text-white">Hierna/next: {{ next_departure.planned_time }} {{ next_departure.product.category_code }} {{ next_departure.direction }}</div>
     </div>
 </body>
 </html>

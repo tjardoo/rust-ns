@@ -16,8 +16,6 @@ pub struct Departure {
     pub stations: Vec<Station>,
     pub messages: Option<Vec<Message>>,
     pub delay_in_minutes: i64,
-    pub has_route_stations: bool,
-    pub has_messages: bool,
 }
 
 #[derive(Serialize, Debug)]
@@ -130,13 +128,6 @@ impl<'de> Deserialize<'de> for Departure {
 
         let delay_in_minutes = actual_date_time - planned_date_time;
 
-        let has_route_stations = helper.route_stations.len() > 0;
-
-        let has_messages = match helper.messages {
-            None => false,
-            Some(_) => true,
-        };
-
         Ok(Departure {
             direction: helper.direction,
             name: helper.name,
@@ -148,8 +139,6 @@ impl<'de> Deserialize<'de> for Departure {
             stations: helper.route_stations,
             messages: helper.messages,
             delay_in_minutes: delay_in_minutes.num_minutes(),
-            has_route_stations,
-            has_messages,
         })
     }
 }

@@ -33,8 +33,6 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
 
     let departures: Vec<Departure> = serde_json::from_value(inner_value.clone()).unwrap();
 
-    println!("{:?}", departures);
-
     let mut view_file_name = "station.html";
 
     if departures.len() == 0 {

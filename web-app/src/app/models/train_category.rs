@@ -8,6 +8,7 @@ pub enum TrainCategory {
     ICE,
     THA,
     EX,
+    NSM,
     UNKNOWN,
 }
 
@@ -22,6 +23,7 @@ impl std::str::FromStr for TrainCategory {
             "ICE" => Ok(TrainCategory::ICE),
             "THA" => Ok(TrainCategory::THA),
             "EX" => Ok(TrainCategory::EX),
+            "NSM" => Ok(TrainCategory::NSM),
             "UNKOWN" => Ok(TrainCategory::UNKNOWN),
             _ => Err(format!("'{}' is not a valid value for TrainCategory", s)),
         }

@@ -38,10 +38,10 @@
         <div class="col-span-6">
             <div class="px-5 py-5 text-2xl font-bold text-blue">
                 {{ departure.direction }}
-                {% if departure.has_route_stations %}
+                {% if departure.stations %}
                 <div class="text-xl">
-                    via
                     {% for station in departure.stations %}
+                    {% if loop.first == true %}via {% endif %}
                         {{ station.name }}{% if loop.last == false %},{% endif %}
                     {% endfor %}
                 </div>
@@ -105,6 +105,6 @@
     </div>
     {% endif %}
     {% endfor %}
-    <div class="absolute bottom-0 w-full py-6 bg-blue"></div>
+    <div class="w-full py-6 bg-blue"></div>
 </body>
 </html>
