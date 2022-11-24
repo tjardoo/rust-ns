@@ -2,7 +2,7 @@ use crate::database::departures::enhance_simple_departure;
 use crate::errors::RustNSError;
 use crate::models::departure::{Departure, SimpleDeparture};
 use crate::models::station_data::{StationData, StationDataDepartures, StationDataDetails};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset, Utc};
 use sqlx::mysql::MySqlPool;
 
 pub async fn db_get_departures_by_station(
@@ -10,6 +10,11 @@ pub async fn db_get_departures_by_station(
     station_code: String,
     limit: u32,
 ) -> Result<StationData, RustNSError> {
+    let current_date_time = Utc::now()
+        .with_timezone(&FixedOffset::east(3600))
+        .format("%Y-%m-%d %H:%M:%S")
+        .to_string();
+
     let simple_departures = sqlx::query_as!(
         SimpleDeparture,
         r#"SELECT 
@@ -26,9 +31,12 @@ pub async fn db_get_departures_by_station(
         departure_status
         FROM departures
         WHERE station_code = ?
+        AND
+        actual_date_time >= ?
         LIMIT ?
         "#,
         station_code,
+        current_date_time,
         limit
     )
     .fetch_all(pool)
