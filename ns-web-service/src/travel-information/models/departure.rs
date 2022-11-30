@@ -42,7 +42,7 @@ pub struct SimpleDeparture {
     pub actual_date_time: DateTime<Utc>,
 
     pub planned_track: String,
-    pub product_id: i32,
+    pub product_id: u32,
     pub train_category: String,
     pub is_cancelled: bool,
     pub departure_status: String,

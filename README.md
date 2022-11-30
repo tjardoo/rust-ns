@@ -24,6 +24,8 @@ sqlx migrate run
 #sqlx migrate revert
 ```
 
+Note: make sure to use InnoDB as default MySQL engine and not MyISAM. MyISAM does not support foreign key constrains.
+
 ## Usage
 
 ### NS Web Service

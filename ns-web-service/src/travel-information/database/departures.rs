@@ -13,7 +13,7 @@ pub async fn db_get_departure_by_id(
 ) -> Result<SimpleDeparture, RustNSError> {
     let departure_row = sqlx::query_as!(
         SimpleDeparture,
-        r#"SELECT 
+        r#"SELECT
         id,
         station_code,
         direction,
@@ -49,7 +49,7 @@ pub async fn db_get_product_by_id(
 ) -> Result<Product, RustNSError> {
     let product_row = sqlx::query_as!(
         Product,
-        r#"SELECT 
+        r#"SELECT
         id,
         product_number as number,
         category_code,
@@ -76,7 +76,7 @@ pub async fn db_get_stations_by_departure_id(
 ) -> Result<Vec<Station>, RustNSError> {
     let stations = sqlx::query_as!(
         Station,
-        r#"SELECT 
+        r#"SELECT
         stations.id,
         uic_code,
         medium_name
@@ -103,7 +103,7 @@ pub async fn db_get_messages_by_departure_id(
 ) -> Result<Vec<Message>, RustNSError> {
     let message_rows = sqlx::query_as!(
         Message,
-        r#"SELECT 
+        r#"SELECT
         id,
         departure_id,
         content,

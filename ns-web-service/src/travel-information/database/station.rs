@@ -17,7 +17,7 @@ pub async fn db_get_departures_by_station(
 
     let simple_departures = sqlx::query_as!(
         SimpleDeparture,
-        r#"SELECT 
+        r#"SELECT
         id,
         station_code as station_code,
         direction,

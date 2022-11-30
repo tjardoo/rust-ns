@@ -1,4 +1,7 @@
 use crate::api_models::api_departure::ApiDeparture;
+use crate::api_models::api_product::ApiProduct;
+use crate::api_models::api_station::ApiRouteStation;
+use crate::models::product::Product;
 use crate::models::station::Station;
 use actix_web::HttpResponse;
 use chrono::NaiveDateTime;
@@ -60,45 +63,32 @@ pub async fn api_download_departures_by_station(
 
     let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
 
-    create_departures_by_station_in_database(&pool, station_code, departures).await;
+    update_departures_by_station_in_database(&pool, station_code, departures).await;
 
     Ok(HttpResponse::Ok().json(value))
 }
 
-pub async fn create_departures_by_station_in_database(
+pub async fn update_departures_by_station_in_database(
     pool: &MySqlPool,
     station_code: String,
     departures: Vec<ApiDeparture>,
 ) {
     for departure in departures {
-        let product_id = sqlx::query_as!(
-            Departure,
-            "INSERT INTO products (
-            product_number,
-            category_code,
-            short_category_name,
-            long_category_name,
-            operator_code,
-            operator_name,
-            product_type
-        ) values (?, ?, ?, ?, ?, ?, ?)",
-            departure.product.number,
-            departure.product.categoryCode,
-            departure.product.shortCategoryName,
-            departure.product.longCategoryName,
-            departure.product.operatorCode,
-            departure.product.operatorName,
-            departure.product.r#type,
-        )
-        .execute(pool)
-        .await
-        .unwrap()
-        .last_insert_id();
+        let product_id = update_or_create_product(pool, departure.product).await;
 
         let planned_track = match departure.plannedTrack {
             Some(p) => p,
             None => "N/A".to_string(),
         };
+
+        delete_existing_departure(
+            pool,
+            &station_code,
+            &departure.name,
+            &departure.plannedDateTime,
+            &planned_track,
+        )
+        .await;
 
         let departure_id = sqlx::query_as!(
             Departure,
@@ -133,40 +123,7 @@ pub async fn create_departures_by_station_in_database(
         .last_insert_id();
 
         for route_station in departure.routeStations {
-            let optional_station = sqlx::query_as!(
-                Station,
-                r#"SELECT 
-                id,
-                uic_code,
-                medium_name
-                FROM stations
-                WHERE uic_code = ?
-                "#,
-                route_station.uicCode
-            )
-            .fetch_optional(pool)
-            .await
-            .expect("Failed to execute query");
-
-            let station_id: u32;
-
-            if let Some(station) = optional_station {
-                station_id = station.id;
-            } else {
-                station_id = sqlx::query_as!(
-                    Station,
-                    "INSERT INTO stations (
-                        uic_code,
-                        medium_name
-                    ) values (?, ?)",
-                    route_station.uicCode,
-                    route_station.mediumName
-                )
-                .execute(pool)
-                .await
-                .unwrap()
-                .last_insert_id() as u32;
-            };
+            let station_id = update_or_create_station(&pool, route_station).await;
 
             sqlx::query_as!(
                 RouteStation,
@@ -200,4 +157,121 @@ pub async fn create_departures_by_station_in_database(
             .last_insert_id();
         }
     }
+}
+
+pub async fn update_or_create_product(pool: &MySqlPool, product: ApiProduct) -> u32 {
+    let product_row = sqlx::query_as!(
+        Product,
+        r#"SELECT
+            id,
+            product_number as number,
+            category_code,
+            short_category_name,
+            long_category_name,
+            operator_code,
+            operator_name,
+            product_type as type
+            FROM products
+            WHERE product_number = ?
+            AND category_code = ?
+            AND operator_code = ?
+            "#,
+        product.number,
+        product.categoryCode,
+        product.operatorCode
+    )
+    .fetch_optional(pool)
+    .await
+    .expect("Failed to execute query");
+
+    if let Some(product) = product_row {
+        return product.id;
+    }
+
+    sqlx::query_as!(
+        Product,
+        "INSERT INTO products (
+        product_number,
+        category_code,
+        short_category_name,
+        long_category_name,
+        operator_code,
+        operator_name,
+        product_type
+    ) values (?, ?, ?, ?, ?, ?, ?)",
+        product.number,
+        product.categoryCode,
+        product.shortCategoryName,
+        product.longCategoryName,
+        product.operatorCode,
+        product.operatorName,
+        product.r#type,
+    )
+    .execute(pool)
+    .await
+    .unwrap()
+    .last_insert_id() as u32
+}
+
+pub async fn update_or_create_station(pool: &MySqlPool, route_station: ApiRouteStation) -> u32 {
+    let station_row = sqlx::query_as!(
+        Station,
+        r#"SELECT
+        id,
+        uic_code,
+        medium_name
+        FROM stations
+        WHERE uic_code = ?
+        "#,
+        route_station.uicCode
+    )
+    .fetch_optional(pool)
+    .await
+    .expect("Failed to execute query");
+
+    if let Some(station) = station_row {
+        return station.id;
+    }
+
+    sqlx::query_as!(
+        Station,
+        "INSERT INTO stations (
+            uic_code,
+            medium_name
+        ) values (?, ?)",
+        route_station.uicCode,
+        route_station.mediumName
+    )
+    .execute(pool)
+    .await
+    .unwrap()
+    .last_insert_id() as u32
+}
+
+pub async fn delete_existing_departure(
+    pool: &MySqlPool,
+    station_code: &String,
+    name: &String,
+    planned_date_time: &String,
+    planned_track: &String,
+) {
+    let planned_date_time =
+        NaiveDateTime::parse_from_str(&planned_date_time, "%Y-%m-%dT%H:%M:%S%.f%z").unwrap();
+
+    sqlx::query(
+        r#"DELETE
+        FROM departures
+        WHERE station_code = ?
+        AND train_name = ?
+        AND planned_date_time = ?
+        AND planned_track = ?
+        "#,
+    )
+    .bind(&station_code)
+    .bind(&name)
+    .bind(planned_date_time)
+    .bind(&planned_track)
+    .execute(pool)
+    .await
+    .expect("Failed to execute query");
 }
