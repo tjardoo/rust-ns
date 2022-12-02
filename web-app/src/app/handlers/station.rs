@@ -18,7 +18,13 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
 
     let url = format!("{}/station/{}?limit={}", target_url, station_code, limit);
 
-    let mut response = awc_client.get(url).send().await.unwrap();
+    let response_result = awc_client.get(url).send().await;
+
+    if let Err(error) = response_result {
+        return Ok(HttpResponse::BadGateway().body(error.to_string()));
+    }
+
+    let mut response = response_result.unwrap();
 
     if response.status() == StatusCode::NOT_FOUND {
         return Ok(HttpResponse::NotFound()
