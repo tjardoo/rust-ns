@@ -3,19 +3,18 @@ use crate::api_models::api_product::ApiProduct;
 use crate::api_models::api_station::ApiRouteStation;
 use crate::models::product::Product;
 use crate::models::station::Station;
-use actix_web::HttpResponse;
 use chrono::NaiveDateTime;
-use log::info;
 use openssl::ssl::{SslConnector, SslVerifyMode};
 use serde_json::Value;
 use sqlx::mysql::MySqlPool;
 use std::env;
 use std::error::Error;
+use tracing::instrument;
 
+#[instrument]
 pub async fn api_download_departures_by_station(
-    pool: &MySqlPool,
-    station_code: String,
-) -> Result<HttpResponse, Box<dyn Error>> {
+    station_code: &String,
+) -> Result<Vec<ApiDeparture>, Box<dyn Error>> {
     let ssl = {
         let mut ssl = SslConnector::builder(openssl::ssl::SslMethod::tls()).unwrap();
         ssl.set_verify(SslVerifyMode::NONE);
@@ -35,12 +34,10 @@ pub async fn api_download_departures_by_station(
         max_journeys
     );
 
-    info!("NS API: {}", url);
-
     let response = awc::ClientBuilder::new()
         .connector(connector)
         .finish()
-        .get(url)
+        .get(&url)
         .insert_header(("Ocp-Apim-Subscription-Key", ns_api_key))
         .insert_header(("User-Agent", "Actix-web"))
         .send()
@@ -52,20 +49,20 @@ pub async fn api_download_departures_by_station(
     let value: Value = serde_json::from_str(&std::str::from_utf8(&response)?)?;
 
     if &value["code"] == 404 {
-        return Ok(
-            HttpResponse::Ok().body(format!("Station code `{}` is not valid.", station_code))
-        );
+        tracing::warn!(url, "Station code {} is not valid.", station_code);
+
+        return Err("Station code is not valid.".into());
     }
 
     let inner_value = &value["payload"]["departures"];
 
-    println!("{:?}", inner_value);
-
     let departures: Vec<ApiDeparture> = serde_json::from_value(inner_value.clone()).unwrap();
 
-    update_departures_by_station_in_database(&pool, station_code, departures).await;
+    let number_of_departures = &departures.len();
 
-    Ok(HttpResponse::Ok().json(value))
+    tracing::info!(url, number_of_departures);
+
+    Ok(departures)
 }
 
 pub async fn update_departures_by_station_in_database(

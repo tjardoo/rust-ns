@@ -6,7 +6,9 @@ use crate::{database::departures::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use std::str::FromStr;
+use tracing::instrument;
 
+#[instrument(skip(app_state))]
 pub async fn get_departure_by_id(
     app_state: web::Data<AppState>,
     params: web::Path<(String, u32)>,

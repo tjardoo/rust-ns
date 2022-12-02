@@ -18,12 +18,12 @@ impl RustNSError {
     fn error_response(&self) -> String {
         match self {
             RustNSError::DatabaseError(msg) => {
-                println!("Database error: {:?}", msg);
+                tracing::error!("Database error: {:?}", msg);
 
                 msg.into()
             }
             RustNSError::InternalServerError(msg) => {
-                println!("Internal server error: {:?}", msg);
+                tracing::error!("Internal server error: {:?}", msg);
 
                 msg.into()
             }

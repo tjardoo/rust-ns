@@ -1,7 +1,9 @@
 use crate::state::AppState;
 use crate::{database::platform::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
+use tracing::instrument;
 
+#[instrument(skip(app_state))]
 pub async fn get_departures_by_platform(
     app_state: web::Data<AppState>,
     params: web::Path<(String, String)>,

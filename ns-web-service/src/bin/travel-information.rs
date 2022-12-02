@@ -2,6 +2,7 @@ use actix_web::{middleware::Logger, middleware::NormalizePath, web, App, HttpSer
 use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
 use std::{env, io};
+use tracing::info;
 
 #[path = "../travel-information/models/ns-api/mod.rs"]
 mod api_models;
@@ -41,8 +42,8 @@ async fn main() -> io::Result<()> {
                 message
             ))
         })
-        .level(log::LevelFilter::Debug)
-        .level_for("sqlx::query", log::LevelFilter::Error)
+        .level(tracing::log::LevelFilter::Debug)
+        .level_for("sqlx::query", tracing::log::LevelFilter::Error)
         .chain(std::io::stdout())
         .chain(fern::log_file("output.log")?)
         .apply()
@@ -62,7 +63,7 @@ async fn main() -> io::Result<()> {
 
     let app_url = env::var("APP_URL").expect("APP_URL is not set in the .env file.");
 
-    println!("Server is running on: {}", app_url);
+    info!("Server is running on: {}", app_url);
 
     HttpServer::new(app).bind(&app_url)?.run().await
 }

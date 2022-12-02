@@ -12,9 +12,9 @@ dotenv = "0.15.0"
 sqlx = { version = "0.6.2", default_features = false, features = ["mysql", "runtime-actix-rustls", "macros", "chrono"] }
 serde = { version = "1.0.145", features = ["derive"] }
 chrono = { version = "0.4.22", features = ["serde"] }
-log = "0.4.17"
-env_logger = "0.9.1"
 awc = { version = "3.0.1", features= ["openssl"] }
 serde_json = "1.0.86"
 openssl = "0.10"
 fern = "0.6.1"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"

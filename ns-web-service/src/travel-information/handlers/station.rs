@@ -2,12 +2,14 @@ use crate::state::AppState;
 use crate::{database::station::*, errors::RustNSError};
 use actix_web::{web, HttpResponse};
 use serde::Deserialize;
+use tracing::instrument;
 
 #[derive(Deserialize, Debug)]
 pub struct QueryFilter {
     pub limit: Option<u32>,
 }
 
+#[instrument(skip(app_state))]
 pub async fn get_departures_by_station(
     app_state: web::Data<AppState>,
     params: web::Path<String>,

@@ -1,7 +1,7 @@
 use super::{api_message::ApiMessage, api_product::ApiProduct, api_station::ApiRouteStation};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[allow(non_snake_case)]
 pub struct ApiDeparture {
     pub direction: String,

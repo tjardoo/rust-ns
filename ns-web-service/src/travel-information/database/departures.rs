@@ -130,7 +130,7 @@ pub async fn enhance_simple_departure(
 
     let simple_departure = simple_departure.unwrap();
 
-    let product = db_get_product_by_id(pool, simple_departure.id)
+    let product = db_get_product_by_id(pool, simple_departure.product_id)
         .await
         .unwrap();
 
