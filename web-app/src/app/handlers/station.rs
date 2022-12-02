@@ -21,7 +21,7 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
     let response_result = awc_client.get(url).send().await;
 
     if let Err(error) = response_result {
-        return Ok(HttpResponse::BadGateway().body(error.to_string()));
+        return Ok(HttpResponse::ServiceUnavailable().body(error.to_string()));
     }
 
     let mut response = response_result.unwrap();
