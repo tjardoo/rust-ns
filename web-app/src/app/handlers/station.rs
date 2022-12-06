@@ -15,6 +15,8 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
     let target_url = env::var("TARGET_URL").expect("TARGET_URL is not set in the .env file.");
     let station_code = env::var("STATION_CODE").expect("STATION_CODE is not set in the .env file.");
     let limit = env::var("SCREEN_ROW_SIZE").expect("SCREEN_ROW_SIZE is not set in the .env file.");
+    let page_reload_in_seconds =
+        env::var("PAGE_RELOAD_IN_SEC").expect("PAGE_RELOAD_IN_SEC is not set in the .env file.");
 
     let url = format!("{}/station/{}?limit={}", target_url, station_code, limit);
 
@@ -54,6 +56,7 @@ pub async fn show_station_display(template: web::Data<tera::Tera>) -> Result<Htt
 
     ctx.insert("current_time", &current_time);
     ctx.insert("departures", &departures);
+    ctx.insert("page_reload_in_seconds", &page_reload_in_seconds);
 
     let rendered = template
         .render(view_file_name, &ctx)

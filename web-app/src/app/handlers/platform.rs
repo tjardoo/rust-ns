@@ -16,6 +16,8 @@ pub async fn show_platform_display(template: web::Data<tera::Tera>) -> Result<Ht
     let station_code = env::var("STATION_CODE").expect("STATION_CODE is not set in the .env file.");
     let platform_code =
         env::var("PLATFORM_CODE").expect("PLATFORM_CODE is not set in the .env file.");
+    let page_reload_in_seconds =
+        env::var("PAGE_RELOAD_IN_SEC").expect("PAGE_RELOAD_IN_SEC is not set in the .env file.");
 
     let url = format!(
         "{}/station/{}/platform/{}",
@@ -63,6 +65,7 @@ pub async fn show_platform_display(template: web::Data<tera::Tera>) -> Result<Ht
     ctx.insert("current_time", &current_time);
     ctx.insert("departure", &departure);
     ctx.insert("next_departure", &next_departure);
+    ctx.insert("page_reload_in_seconds", &page_reload_in_seconds);
 
     let rendered = template
         .render(view_file_name, &ctx)
