@@ -7,7 +7,7 @@ This project consists of 2 applications. `ns-web-service` communicates with the 
 - `/station` displays all departures from the station set in the `.env` file.
 - `/platform` displays the current/next departure from the given platform set in the `.env`.
 
-Both applications run on their own port so they can communicate with each other (on the same machine). In the `.env` file you'll see we use `:7878` for the `ns-web-service` application and `:8888` for the `web-app`` application.
+Both applications run on their own port so they can communicate with each other (on the same machine). In the `.env` file you'll see we use `:7878` for the `ns-web-service` application and `:8888` for the `web-app` application.
 
 ## Requirements
 
@@ -79,6 +79,8 @@ PAGE_RELOAD_IN_SEC=30
 cd web-app
 cargo run --bin app
 ```
+
+If your database has no current/future departures for the station an platform set in the `.env` you'll see a page with the text 'Er is momenteel geen reisinformatie beschikbaar'.
 
 ### Station
 
