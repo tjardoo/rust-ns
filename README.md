@@ -2,14 +2,12 @@
 
 This project was created to learn the programming language Rust.
 
-TLDR: Communicates with the NS API and displays the station/platform departures in the browser.
-
-The project consists of 2 applications. `ns-web-service` communicates with the NS API (Dutch Railways), processes the departure data and saves it to the database. `web-app` fetches the departures from the database via the first application and displays it in the browser. The departures can be display in 2 different formats.
+This project consists of 2 applications. `ns-web-service` communicates with the NS API (Dutch Railways), processes the departure data and saves it to the database. `web-app` fetches the departures from the database via the first application and displays it in the browser.
 
 - `/station` displays all departures from the station set in the `.env` file.
 - `/platform` displays the current/next departure from the given platform set in the `.env`.
 
-Both applications run on their own port so they can communicate with each other. In the `.env` file you'll see we use `:7878` for the `ns-web-service` application and `:8888` for the `web-app`` application.
+Both applications run on their own port so they can communicate with each other (on the same machine). In the `.env` file you'll see we use `:7878` for the `ns-web-service` application and `:8888` for the `web-app`` application.
 
 ## Requirements
 
@@ -30,8 +28,6 @@ Note: make sure you use `InnoDB` as default MySQL engine and not MyISAM. MyISAM 
 
 ## Usage
 
-You'll need to start the `ns-web-service` application first and then the `web-app`.
-
 ### NS Web Service
 
 You'll first need to set some variables in the `.env` file.
@@ -50,7 +46,7 @@ NS_API_KEY=
 NS_API_MAX_JOURNEYS=25
 
 # required by sqlx (todo)
-DATABASE_URL=mysql://root:@127.0.0.1:3306/rust_ns_test
+DATABASE_URL=mysql://username:password@127.0.0.1:3306/rust_ns_test
 ```
 
 ```bash
@@ -60,11 +56,9 @@ cargo run --bin travel-information
 
 #### NS Web Service routes
 
-In your `.env` file you can set the `APP_URL` variable (ie. localhost:7878).
-
-- app url + `/station/{station_code}` [JSON response example](docs/api/station.md)
-- app url + `/station/{station_code}/platform/{platform_code}` [JSON response example](docs/api/platform.md)
-- app url + `/station/{station_code}/download`
+- `/station/{station_code}/download`
+- `/station/{station_code}` [JSON response example](docs/api/station.md)
+- `/station/{station_code}/platform/{platform_code}` [JSON response example](docs/api/platform.md)
 
 ### Web App
 
@@ -73,7 +67,7 @@ You'll first need to set some variables in the `.env` file.
 ```env
 APP_URL=localhost:8888
 
-TARGET_URL=http://localhost:7878
+TARGET_URL=http://localhost:7878 // this is the URL of the ns-web-service
 
 STATION_CODE=ASS
 PLATFORM_CODE=3
@@ -86,12 +80,20 @@ cd web-app
 cargo run --bin app
 ```
 
+### Station
+
+![Screenshot station](./docs/images/screenshot-station.png?raw=true "Screenshot station")
+
+### Platform
+
+![Screenshot platform](./docs/images/screenshot-platform.png?raw=true "Screenshot platform")
+
 #### Web App routes
 
-In your `.env` file you can set the `APP_URL` variable (ie. localhost:8888).
+- `/station`
+- `/platform`
 
-- app url + `/station`
-- app url + `/platform`
+Both pages automatically refresh after 30 seconds.
 
 ## Support
 
@@ -99,12 +101,14 @@ In your `.env` file you can set the `APP_URL` variable (ie. localhost:8888).
 
 - `ASD` = Amsterdam Centraal
 - `ASS` = Amsterdam Sloterdijk
+- `SHL` = Schiphol Airport
+- `GVC` = Den Haag Centraal
 - `UT` = Utrecht Centraal
 - `HN` = Hoorn
 
 ### TailwindCSS CLI build process
 
-You'll need to run 1 of the following commands if you make changes the the html templates. This checks whether TailwindCSS classes have been added/removed and updates the `output.css` file.
+You'll need to run the following command if you make changes the the html templates. This checks whether TailwindCSS classes have been added/removed and updates the `output.css` file.
 
 ```bash
 npx tailwindcss -i ./static/input.css -o ./static/css/output.css --watch # for development
@@ -121,4 +125,4 @@ npx tailwindcss -i ./static/input.css -o ./static/css/output.css
 
 ## Disclaimer
 
-NS/NS Reizigers is part of Nederlandse Spoorwegen B.V. and/or partners and is not associated with this project. This project is an independent application that is developed with the aim of learning the programming language Rust. This project makes use of the NS API.
+NS/NS Reizigers is part of Nederlandse Spoorwegen B.V. and/or partners and is NOT associated with this project. This project is an independent application that is developed with the aim of learning the programming language Rust.
